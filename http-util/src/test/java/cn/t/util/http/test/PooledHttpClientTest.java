@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * @author <a href="mailto:yangjian@ifenxi.com">研发部-杨建</a>
+ * @author <a href="mailto:yangjian@liby.ltd">研发部-杨建</a>
  * @version V1.0
  * @since 2020-12-22 20:13
  **/

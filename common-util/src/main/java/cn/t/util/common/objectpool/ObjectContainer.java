@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
- * @author <a href="mailto:yangjian@ifenxi.com">研发部-杨建</a>
+ * @author <a href="mailto:yangjian@liby.ltd">研发部-杨建</a>
  * @version V1.0
  * @since 2021-04-25 21:34
  **/
