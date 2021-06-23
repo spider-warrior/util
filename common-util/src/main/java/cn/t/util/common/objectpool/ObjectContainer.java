@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /**
+ * 对象池
+ *
  * @author <a href="mailto:yangjian@liby.ltd">研发部-杨建</a>
  * @version V1.0
  * @since 2021-04-25 21:34
@@ -15,9 +17,7 @@ public class ObjectContainer {
     private static final Map<Class<?>, Supplier<?>> providerMap = new ConcurrentHashMap<>();
 
     public static void config(List<ObjectConfig<?>> configList) {
-        configList.forEach(config -> {
-            providerMap.put(config.getClazz(), config.getSupplier());
-        });
+        configList.forEach(config -> providerMap.put(config.getClazz(), config.getSupplier()));
     }
 
     public static class ObjectConfig<T> {

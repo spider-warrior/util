@@ -39,13 +39,6 @@ public class Assert {
         }
     }
 
-    public static void notEmpty(Object[] array, String message) {
-        if (ObjectUtil.isEmpty(array)) {
-            throw new IllegalArgumentException(message);
-        }
-    }
-
-
     public static void noNullElements(Object[] array, String message) {
         if (array != null) {
             for (Object element : array) {

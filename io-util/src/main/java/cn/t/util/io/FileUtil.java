@@ -435,4 +435,15 @@ public class FileUtil {
         builder.append(path);
         return URI.create(builder.toString());
     }
+
+    public static String extractFileExtension(String fileName) {
+        if(StringUtil.isEmpty(fileName)) {
+            return "";
+        }
+        int dotIndex = fileName.indexOf('.');
+        if(dotIndex == -1) {
+            return "";
+        }
+        return fileName.substring(dotIndex + 1);
+    }
 }

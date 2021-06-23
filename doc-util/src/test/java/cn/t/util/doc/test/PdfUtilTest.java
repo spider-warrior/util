@@ -19,7 +19,7 @@ import java.io.File;
  **/
 public class PdfUtilTest {
     public static void main(String[] args) throws Exception {
-        String sourceDir = "D:/tmp/pdftest/采购数字化厂商全景报告20210602.pdf"; // Pdf files are read from this folder
+        String sourceDir = "D:/tmp/pdftest/210207-人力资源数字化趋势报告20210419.pdf"; // Pdf files are read from this folder
         String destinationDir = "D:/tmp/pdftest/Converted_PdfFiles_to_Image/"; // converted images from pdf document are saved here
 
         File sourceFile = new File(sourceDir);

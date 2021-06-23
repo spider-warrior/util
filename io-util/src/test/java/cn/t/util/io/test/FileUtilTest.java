@@ -196,4 +196,11 @@ public class FileUtilTest {
     public void createFileUriTest() {
         System.out.println(FileUtil.createFileUri("/data/app/bumm_btcusd-MMStrategy/persist.json"));
     }
+
+    @Test
+    public void extractFileExtensionTest() {
+        System.out.println(FileUtil.extractFileExtension("a"));
+        System.out.println(FileUtil.extractFileExtension("a."));
+        System.out.println(FileUtil.extractFileExtension("a.doc"));
+    }
 }
