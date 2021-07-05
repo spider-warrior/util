@@ -9,7 +9,7 @@ import java.util.Set;
 
 public class NodeListIterable implements Iterable<Node> {
 
-    private NodeList nodeList;
+    private final NodeList nodeList;
 
     public NodeListIterable(NodeList nodeList) {
         this.nodeList = nodeList;
@@ -22,12 +22,12 @@ public class NodeListIterable implements Iterable<Node> {
 
     private class NodeIterator implements Iterator<Node> {
 
-        private Set<String> excludeNodeNames = new HashSet<String>() {{
+        private final Set<String> excludeNodeNames = new HashSet<>() {{
             add("#text");
         }};
 
         private int index;
-        private int size;
+        private final int size;
         private Node currentNode;
 
         private NodeIterator() {
@@ -44,10 +44,8 @@ public class NodeListIterable implements Iterable<Node> {
                         return true;
                     }
                 }
-                return false;
-            } else {
-                return false;
             }
+            return false;
         }
 
         @Override

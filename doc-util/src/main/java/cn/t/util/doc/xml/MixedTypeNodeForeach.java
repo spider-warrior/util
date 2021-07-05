@@ -10,7 +10,7 @@ import java.util.Map;
 public abstract class MixedTypeNodeForeach implements NodeCallback<Map<String, Object>> {
 
     private final Map<String, Object> result = new HashMap<>();
-    private List<NodeCallback<?>> nodeCallbacks = new ArrayList<>();
+    private final List<NodeCallback<?>> nodeCallbacks = new ArrayList<>();
 
     @Override
     public void readNode(Node node) {
