@@ -9,8 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
-
 public class JsonUtil {
 
     private static final ObjectMapper OBJECT_MAPPER = JsonMapper.builder()
@@ -21,11 +19,11 @@ public class JsonUtil {
         .build();
 
 
-    public static <T> T deserialize(String data, Class<T> clazz) throws IOException {
+    public static <T> T deserialize(String data, Class<T> clazz) throws JsonProcessingException {
         return OBJECT_MAPPER.readValue(data, clazz);
     }
 
-    public static <T> T deserialize(String data, TypeReference<T> tTypeReference) throws IOException {
+    public static <T> T deserialize(String data, TypeReference<T> tTypeReference) throws JsonProcessingException {
         return OBJECT_MAPPER.readValue(data, tTypeReference);
     }
 
