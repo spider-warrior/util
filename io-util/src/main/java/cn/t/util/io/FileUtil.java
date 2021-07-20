@@ -166,6 +166,19 @@ public class FileUtil {
         }
     }
 
+    public static void copyFile(InputStream from, String to) throws IOException {
+        int len;
+        byte[] cache = new byte[2048];
+        try (
+            FileOutputStream fos = new FileOutputStream(to);
+            InputStream is = from
+        ) {
+            while ((len = is.read(cache)) > 1) {
+                fos.write(cache, 0, len);
+            }
+        }
+    }
+
     /**
      * 获取文件mime type
      * @param path xxx
