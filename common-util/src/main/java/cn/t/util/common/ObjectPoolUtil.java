@@ -62,11 +62,7 @@ public class ObjectPoolUtil {
 
     private static void checkPool() {
         poolMap.forEach((clazz, pool) -> {
-            logger.info("[before] pool-{} check, leisure size: {}, inUseSize: {}, max: {}, min: {}, idle: {}, ttl: {}",
-                pool.getName(), pool.getLeisureList().size(), pool.getInUseList().size(), pool.getMax(), pool.getMin(), pool.getIdle(), pool.getTtl());
             pool.clearExpireUnit();
-            logger.info("[after] pool-{} check, leisure size: {}, inUseSize: {}, max: {}, min: {}, idle: {}, ttl: {}",
-                pool.getName(), pool.getLeisureList().size(), pool.getInUseList().size(), pool.getMax(), pool.getMin(), pool.getIdle(), pool.getTtl());
         });
     }
 
@@ -229,6 +225,8 @@ public class ObjectPoolUtil {
         }
 
         public synchronized void clearExpireUnit() {
+            logger.info("[before] pool-{} check, leisure size: {}, inUseSize: {}, max: {}, min: {}, idle: {}, ttl: {}",
+                this.name, this.leisureList.size(), this.inUseList.size(), this.max, this.min, this.idle, this.ttl);
             //没有空闲对象
             if(leisureList.size() == 0) {
                 return;
@@ -252,6 +250,8 @@ public class ObjectPoolUtil {
                 }
             }
             leisureList.removeAll(expiredUnitList);
+            logger.info("[after] pool-{} check, leisure size: {}, inUseSize: {}, max: {}, min: {}, idle: {}, ttl: {}",
+                this.name, this.leisureList.size(), this.inUseList.size(), this.max, this.min, this.idle, this.ttl);
         }
     }
 
