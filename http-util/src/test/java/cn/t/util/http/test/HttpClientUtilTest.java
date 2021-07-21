@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,6 +85,13 @@ public class HttpClientUtilTest {
         } catch (Exception e) {
             logger.error("", e);
         }
+    }
+
+    @Test
+    public void selfCertificateTest() throws Exception {
+        String uri = "https://liby.com/";
+        HttpResponseEntity entity = HttpClientUtil.sslGetWithoutCertificateCheck(uri, Collections.emptyMap());
+        System.out.println(entity);
     }
 
     @Test

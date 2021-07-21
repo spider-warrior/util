@@ -54,7 +54,7 @@ import java.util.Map;
  * 2.使用EntityUtils.consume消费响应内容使当前链接可复用
  * CloseableHttpResponse response = httpClient.execute(httpPost);
  * if(null != response.getEntity()){
- *    EntityUtils.consume(response.getEntity());
+ * EntityUtils.consume(response.getEntity());
  * }
  */
 public class HttpClientUtil {
@@ -354,13 +354,13 @@ public class HttpClientUtil {
         if (!CollectionUtil.isEmpty(params)) {
             if (ParamFormat.APPLICATION_JSON == format) {
                 request.setEntity(new StringEntity(JsonUtil.serialize(params), ContentType.APPLICATION_JSON));
-            } else if(ParamFormat.FORM_DATA == format) {
+            } else if (ParamFormat.FORM_DATA == format) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
                 builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
                 builder.setCharset(StandardCharsets.UTF_8);
                 params.forEach((k, v) -> {
-                    if(v instanceof File) {
-                        File file = (File)v;
+                    if (v instanceof File) {
+                        File file = (File) v;
                         builder.addBinaryBody(k, file);
                     } else {
                         builder.addTextBody(k, v.toString(), ContentType.create(ContentType.DEFAULT_TEXT.getMimeType(), "UTF-8"));
@@ -368,14 +368,14 @@ public class HttpClientUtil {
                 });
                 HttpEntity entity = builder.build();
                 request.setEntity(entity);
-            }
-            else {
+            } else {
                 List<NameValuePair> paramMap = new ArrayList<>();
                 params.forEach((k, v) -> paramMap.add(new BasicNameValuePair(k, v == null ? "" : v.toString())));
                 request.setEntity(new UrlEncodedFormEntity(paramMap));
             }
         }
     }
+
     private static void setBody(HttpEntityEnclosingRequest request, ParamFormat format, String content) {
         if (!StringUtil.isEmpty(content)) {
             if (ParamFormat.APPLICATION_JSON == format) {
@@ -386,14 +386,30 @@ public class HttpClientUtil {
         }
     }
 
+    private static RequestConfig defaultRequestConfig() {
+        return RequestConfig.custom()
+            .setConnectTimeout(1500)
+            .setSocketTimeout(5000)
+            .setCookieSpec(CookieSpecs.STANDARD)
+            .build();
+    }
+
     private static CloseableHttpClient createDefaultHttpClient() {
-        return HttpClientBuilder.create().setDefaultRequestConfig(RequestConfig.custom().setConnectTimeout(3000).setSocketTimeout(5000).setCookieSpec(CookieSpecs.STANDARD).build()).build();
+        return HttpClientBuilder
+            .create()
+            .setDefaultRequestConfig(defaultRequestConfig())
+            .build();
     }
 
     private static CloseableHttpClient createHttpClientWithoutCertificateCheck() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         SSLContextBuilder builder = new SSLContextBuilder();
         builder.loadTrustMaterial(null, (chain, authType) -> true);
-        return HttpClients.custom().setSSLSocketFactory(new SSLConnectionSocketFactory(builder.build(), NoopHostnameVerifier.INSTANCE)).setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build()).build();
+        SSLContext sslContext = builder.build();
+        return HttpClients
+            .custom()
+            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
+            .setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext))
+            .setDefaultRequestConfig(defaultRequestConfig()).build();
     }
 
     private static CloseableHttpClient createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws KeyManagementException {
@@ -423,8 +439,8 @@ public class HttpClientUtil {
             ct = ContentType.parse(contentTypeHeader.getValue());
         }
         responseEntity.setHeaders(response.getAllHeaders());
-        if(entity != null) {
-            if(isStringContent(ct)) {
+        if (entity != null) {
+            if (isStringContent(ct)) {
                 Charset charset = (ct != null && ct.getCharset() != null ? ct.getCharset() : Charset.defaultCharset());
                 responseEntity.setContent(EntityUtils.toString(entity, charset));
             } else {
@@ -440,7 +456,7 @@ public class HttpClientUtil {
             return "";
         }
         StringBuilder builder = new StringBuilder();
-        if(encode) {
+        if (encode) {
             param.forEach((k, v) -> {
                 builder.append("&").append(k).append("=");
                 try {
@@ -463,6 +479,7 @@ public class HttpClientUtil {
     }
 
     private static final List<ContentType> STRING_CONTENT_LIST = new ArrayList<>();
+
     static {
         STRING_CONTENT_LIST.add(ContentType.APPLICATION_ATOM_XML);
         STRING_CONTENT_LIST.add(ContentType.APPLICATION_FORM_URLENCODED);
