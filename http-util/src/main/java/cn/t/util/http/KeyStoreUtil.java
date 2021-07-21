@@ -45,7 +45,7 @@ public class KeyStoreUtil {
         return keyManagerFactory;
     }
 
-    public static TrustManagerFactory initSunX509TrustManagerFactory(KeyStore keyStore) throws NoSuchAlgorithmException, UnrecoverableKeyException, KeyStoreException {
+    public static TrustManagerFactory initSunX509TrustManagerFactory(KeyStore keyStore) throws NoSuchAlgorithmException, KeyStoreException {
         TrustManagerFactory trustManagerFactory = getSunX509TrustManagerFactory();
         trustManagerFactory.init(keyStore);
         return trustManagerFactory;

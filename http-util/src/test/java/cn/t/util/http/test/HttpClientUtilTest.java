@@ -88,9 +88,24 @@ public class HttpClientUtilTest {
     }
 
     @Test
-    public void selfCertificateTest() throws Exception {
+    public void selfCertificateGetTest() throws Exception {
+        String uri = "https://liby.com/";
+        HttpResponseEntity entity = HttpClientUtil.get(uri, Collections.emptyMap());
+        System.out.println(entity);
+    }
+    @Test
+    public void selfCertificateSslGetWithoutCertificateCheckTest() throws Exception {
         String uri = "https://liby.com/";
         HttpResponseEntity entity = HttpClientUtil.sslGetWithoutCertificateCheck(uri, Collections.emptyMap());
+        System.out.println(entity);
+    }
+
+    @Test
+    public void selfCertificateSslGetWithKeyManagerFactoryAndTrustManagerFactoryTest() throws Exception {
+        String uri = "https://liby.com/";
+        KeyStore trustStore = KeyStoreUtil.loadCertificate(CertificateType.PKCS12, "C:/Program Files/Java/jdk-11.0.9/lib/security/cacerts", "changeit".toCharArray());
+        TrustManagerFactory trustManagerFactory = KeyStoreUtil.initSunX509TrustManagerFactory(trustStore);
+        HttpResponseEntity entity = HttpClientUtil.sslGetWithKeyManagerFactoryAndTrustManagerFactory(uri, Collections.emptyMap(), null, trustManagerFactory );
         System.out.println(entity);
     }
 

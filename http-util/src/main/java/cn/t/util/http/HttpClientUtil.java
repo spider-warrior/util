@@ -27,9 +27,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -414,7 +412,15 @@ public class HttpClientUtil {
 
     private static CloseableHttpClient createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws KeyManagementException {
         SSLContext sslContext = SSLContexts.createDefault();
-        sslContext.init(keyManagerFactory.getKeyManagers(), trustManagerFactory.getTrustManagers(), null);
+        KeyManager[] keyManagers = null;
+        TrustManager[] trustManagers = null;
+        if(keyManagerFactory != null) {
+            keyManagers = keyManagerFactory.getKeyManagers();
+        }
+        if(trustManagerFactory != null) {
+            trustManagers = trustManagerFactory.getTrustManagers();
+        }
+        sslContext.init(keyManagers, trustManagers, null);
         SSLConnectionSocketFactory sslConnectionFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
         Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
             .register("https", sslConnectionFactory)
