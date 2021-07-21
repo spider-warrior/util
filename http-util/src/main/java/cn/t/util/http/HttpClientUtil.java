@@ -21,6 +21,9 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
@@ -335,10 +338,11 @@ public class HttpClientUtil {
     private static HttpResponseEntity executeRequest(CloseableHttpClient httpClient, HttpUriRequest request) throws IOException {
         RequestLine requestLine = request.getRequestLine();
         logger.trace("Executing request: {}", requestLine);
+        HttpContext context = new BasicHttpContext();
         try (
-            CloseableHttpResponse response = httpClient.execute(request)
+            CloseableHttpResponse response = httpClient.execute(request, context)
         ) {
-            return buildHttpResponseEntity(response);
+            return buildHttpResponseEntity(response, context);
         }
     }
 
@@ -433,7 +437,7 @@ public class HttpClientUtil {
 
     }
 
-    private static HttpResponseEntity buildHttpResponseEntity(CloseableHttpResponse response) throws IOException {
+    private static HttpResponseEntity buildHttpResponseEntity(CloseableHttpResponse response, HttpContext context) throws IOException {
         HttpResponseEntity responseEntity = new HttpResponseEntity();
         StatusLine statusLine = response.getStatusLine();
         HttpEntity entity = response.getEntity();
@@ -447,11 +451,18 @@ public class HttpClientUtil {
         responseEntity.setHeaders(response.getAllHeaders());
         if (entity != null) {
             if (isStringContent(ct)) {
-                Charset charset = (ct != null && ct.getCharset() != null ? ct.getCharset() : Charset.defaultCharset());
+                Charset charset = ct.getCharset() != null ? ct.getCharset() : Charset.defaultCharset();
                 responseEntity.setContent(EntityUtils.toString(entity, charset));
             } else {
                 responseEntity.setContent(EntityUtils.toByteArray(entity));
             }
+        }
+        HttpUriRequest currentRequest = (HttpUriRequest) context.getAttribute(HttpCoreContext.HTTP_REQUEST);
+        if(currentRequest.getURI().isAbsolute()) {
+            responseEntity.setUrl(currentRequest.getURI().toString());
+        } else {
+            HttpHost currentHost = (HttpHost)  context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
+            responseEntity.setUrl(currentHost.toURI() + currentRequest.getURI());
         }
         EntityUtils.consume(entity);
         return responseEntity;

@@ -89,7 +89,9 @@ public class HttpClientUtilTest {
 
     @Test
     public void selfCertificateGetTest() throws Exception {
-        String uri = "https://liby.com/";
+//        String uri = "https://liby.ltd/1.png";
+        String uri = "http://liby.ltd/";
+//        String uri = "https://www.baidu.com";
         HttpResponseEntity entity = HttpClientUtil.get(uri, Collections.emptyMap());
         System.out.println(entity);
     }

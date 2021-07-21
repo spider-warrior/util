@@ -14,6 +14,8 @@ public class HttpResponseEntity {
 
     private Object content;
 
+    private String url;
+
     public int getCode() {
         return code;
     }
@@ -46,13 +48,22 @@ public class HttpResponseEntity {
         this.content = content;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     public String toString() {
         return "HttpResponseEntity{" +
             "code=" + code +
             ", contentType='" + contentType + '\'' +
             ", headers=" + Arrays.toString(headers) +
-            ", content=" + (content instanceof byte[] ? Arrays.toString((byte[])content) : content) +
+            ", content=" + content +
+            ", url='" + url + '\'' +
             '}';
     }
 }
