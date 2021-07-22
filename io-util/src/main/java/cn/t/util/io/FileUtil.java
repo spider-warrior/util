@@ -166,7 +166,13 @@ public class FileUtil {
         }
     }
 
-    public static void copyFile(InputStream from, String to) throws IOException {
+    public static void save(byte[] content, String to) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(to)) {
+            fos.write(content);
+        }
+    }
+
+    public static void save(InputStream from, String to) throws IOException {
         int len;
         byte[] cache = new byte[2048];
         try (
