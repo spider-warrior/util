@@ -1,8 +1,8 @@
 package cn.t.util.common.test;
 
-import cn.t.util.common.reflect.ProxyUtil;
 import cn.t.util.common.proxy.ProxyCallback;
 import cn.t.util.common.proxy.ProxyConfig;
+import cn.t.util.common.reflect.ProxyUtil;
 import cn.t.util.common.test.entity.Animal;
 import cn.t.util.common.test.entity.Dog;
 import cn.t.util.common.test.entity.SubClass;
@@ -13,12 +13,11 @@ import java.lang.reflect.Method;
 
 public class ProxyUtilTest {
 
-    private ProxyCallback callback;
     private ProxyConfig config;
 
     @Before
     public void init() {
-        callback = new ProxyCallback() {
+        ProxyCallback callback = new ProxyCallback() {
             @Override
             public void before(Object obj, Method method, Object[] args) {
                 System.out.println("before....");
@@ -37,6 +36,7 @@ public class ProxyUtilTest {
     @Test
     public void testCglibProxy() {
         Dog dog = new Dog();
+        dog.setName("大黄");
         Dog dogProxy = (Dog) ProxyUtil.generateCglibProxy(dog, config);
         dogProxy.shout();
     }
@@ -44,6 +44,7 @@ public class ProxyUtilTest {
     @Test
     public void testJdkProxy() {
         Dog dog = new Dog();
+        dog.setName("小黑");
         Animal dogProxy = (Animal) ProxyUtil.generateJdkProxy(dog, config);
         dogProxy.shout();
     }

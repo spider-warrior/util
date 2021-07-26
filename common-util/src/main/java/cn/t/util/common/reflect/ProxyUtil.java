@@ -40,17 +40,15 @@ public class ProxyUtil {
      */
     private interface BaseProxy {
         default boolean apply(Method method, String... methods) {
-            if (methods == null || methods.length == 0) {
-                return false;
-            } else {
+            if (methods != null && methods.length != 0) {
                 String methodName = method.getName();
                 for (String m : methods) {
-                    if (methodName.equals(m)) {
+                    if ("*".equals(methodName) || methodName.equals(m)) {
                         return true;
                     }
                 }
-                return false;
             }
+            return false;
         }
     }
 
@@ -86,8 +84,8 @@ public class ProxyUtil {
 
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
-            callback.before(obj, method, args);
-            Object result = methodProxy.invokeSuper(obj, args);
+            callback.before(target, method, args);
+            Object result = method.invoke(target, args);
             callback.after(result);
             return result;
         }
