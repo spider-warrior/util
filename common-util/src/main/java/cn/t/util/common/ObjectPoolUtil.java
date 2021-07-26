@@ -43,7 +43,7 @@ public class ObjectPoolUtil {
             pool = new Pool<>();
             pool.setName(clazz.getSimpleName());
             pool.setMax(config.getMax());
-            pool.setIdle(config.getIdle());
+            pool.setMin(config.getMin());
             pool.setTtl(config.getTtl());
             pool.setSupplier(supplier);
             poolMap.put(clazz, pool);
@@ -71,7 +71,6 @@ public class ObjectPoolUtil {
         private Supplier<T> supplier;
         private int max;
         private int min;
-        private int idle;
         private long ttl;
 
         public Class<T> getClazz() {
@@ -106,14 +105,6 @@ public class ObjectPoolUtil {
             this.min = min;
         }
 
-        public int getIdle() {
-            return idle;
-        }
-
-        public void setIdle(int idle) {
-            this.idle = idle;
-        }
-
         public long getTtl() {
             return ttl;
         }
@@ -127,14 +118,13 @@ public class ObjectPoolUtil {
         private String name;
         private int max = 10;
         private int min = 2;
-        private int idle = 2;
         private long ttl = 10000;
         private Supplier<T> supplier;
         private final List<ObjectUnit<T>> inUseList = new ArrayList<>();
         private final List<ObjectUnit<T>> leisureList = new ArrayList<>();
 
         private final RejectionHandler rejectionHandler = () -> {
-            throw new RuntimeException(name + " is full, current size: " + inUseList.size() +", max: " + max + ", min: " + min  + ", idle: " + idle + ", ttl: " + ttl);
+            throw new RuntimeException(name + " is full, current size: " + inUseList.size() +", max: " + max + ", min: " + min + ", ttl: " + ttl);
         };
 
         public String getName() {
@@ -159,14 +149,6 @@ public class ObjectPoolUtil {
 
         public void setMin(int min) {
             this.min = min;
-        }
-
-        public int getIdle() {
-            return idle;
-        }
-
-        public void setIdle(int idle) {
-            this.idle = idle;
         }
 
         public long getTtl() {
@@ -225,8 +207,8 @@ public class ObjectPoolUtil {
         }
 
         public synchronized void clearExpireUnit() {
-            logger.info("[before] pool-{} check, leisure size: {}, inUseSize: {}, max: {}, min: {}, idle: {}, ttl: {}",
-                this.name, this.leisureList.size(), this.inUseList.size(), this.max, this.min, this.idle, this.ttl);
+            logger.info("[before] pool-{} check, leisure size: {}, inUseSize: {}, max: {}, min: {}, ttl: {}",
+                this.name, this.leisureList.size(), this.inUseList.size(), this.max, this.min, this.ttl);
             //没有空闲对象
             if(leisureList.size() == 0) {
                 return;
@@ -243,15 +225,12 @@ public class ObjectPoolUtil {
                 }
             });
             int remain = leisureList.size() + inUseList.size() - expiredUnitList.size();
-            int extra = remain - idle;
-            if(extra < 0) {
-                while ((extra++) < 0) {
-                    expiredUnitList.poll();
-                }
+            while ((remain++) < min) {
+                expiredUnitList.poll();
             }
             leisureList.removeAll(expiredUnitList);
-            logger.info("[after] pool-{} check, leisure size: {}, inUseSize: {}, max: {}, min: {}, idle: {}, ttl: {}",
-                this.name, this.leisureList.size(), this.inUseList.size(), this.max, this.min, this.idle, this.ttl);
+            logger.info("[after] pool-{} check, leisure size: {}, inUseSize: {}, max: {}, min: {}, ttl: {}",
+                this.name, this.leisureList.size(), this.inUseList.size(), this.max, this.min, this.ttl);
         }
     }
 
