@@ -19,9 +19,10 @@ import java.util.function.Supplier;
 public class ObjectPoolUtilTest {
 
     public static void main(String[] args) {
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
         initPoolConfig();
         for(int i=0; i<1000; i++) {
-            ExecutorService executorService = Executors.newFixedThreadPool(3);
+            int index = i;
             executorService.submit(() -> {
                 if(System.currentTimeMillis() % 2 == 0) {
                     ObjectPoolUtil.ObjectUnit<Dog> unit = ObjectPoolUtil.getInstance(Dog.class);
@@ -34,6 +35,7 @@ public class ObjectPoolUtilTest {
                     cat.shout();
                     unit.release();
                 }
+                System.out.println("第 " + index + " 任务完成");
             });
 //            LockSupport.parkNanos(100000000);
 //            new Thread(() -> {
@@ -57,7 +59,7 @@ public class ObjectPoolUtilTest {
         List<ObjectPoolUtil.PoolConfig<?>> configList = new ArrayList<>();
         ObjectPoolUtil.PoolConfig<Dog> dogPoolConfig = new ObjectPoolUtil.PoolConfig<>();
         dogPoolConfig.setClazz(Dog.class);
-        dogPoolConfig.setMax(10);
+        dogPoolConfig.setMax(4);
         dogPoolConfig.setMin(1);
         dogPoolConfig.setTtl(5000);
         dogPoolConfig.setSupplier(new DogSupplier());
@@ -65,7 +67,7 @@ public class ObjectPoolUtilTest {
 
         ObjectPoolUtil.PoolConfig<Cat> catPoolConfig = new ObjectPoolUtil.PoolConfig<>();
         catPoolConfig.setClazz(Cat.class);
-        catPoolConfig.setMax(20);
+        catPoolConfig.setMax(10);
         catPoolConfig.setMin(1);
         catPoolConfig.setTtl(5000);
         catPoolConfig.setSupplier(new CatSupplier());
