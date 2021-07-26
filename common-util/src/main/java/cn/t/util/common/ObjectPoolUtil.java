@@ -182,7 +182,7 @@ public class ObjectPoolUtil {
                 unit = leisureList.remove(0);
             } else {
                 //达到最大数量
-                if(inUseList.size() > max) {
+                if(inUseList.size() == max) {
                     rejectionHandler.reject();
                 }
                 T t = supplier.get();
@@ -225,7 +225,7 @@ public class ObjectPoolUtil {
                 }
             });
             int remain = leisureList.size() + inUseList.size() - expiredUnitList.size();
-            while ((remain++) < min) {
+            while ((remain++) <= min) {
                 expiredUnitList.poll();
             }
             leisureList.removeAll(expiredUnitList);
