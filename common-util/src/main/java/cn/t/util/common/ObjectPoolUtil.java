@@ -1,8 +1,12 @@
 package cn.t.util.common;
 
+import cn.t.util.common.proxy.ProxyCallback;
+import cn.t.util.common.proxy.ProxyConfig;
+import cn.t.util.common.reflect.ProxyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -122,10 +126,10 @@ public class ObjectPoolUtil {
         private Supplier<T> supplier;
         private final List<ObjectUnit<T>> inUseList = new ArrayList<>();
         private final List<ObjectUnit<T>> leisureList = new ArrayList<>();
-
         private final RejectionHandler rejectionHandler = () -> {
             throw new RuntimeException(name + " is full, current size: " + inUseList.size() +", max: " + max + ", min: " + min + ", ttl: " + ttl);
         };
+        private final String[] interceptMethods = { "*" };
 
         public String getName() {
             return name;
@@ -175,6 +179,7 @@ public class ObjectPoolUtil {
             return leisureList;
         }
 
+        @SuppressWarnings("unchecked")
         public synchronized ObjectUnit<T> getInstance() {
             ObjectUnit<T> unit;
             if(leisureList.size() > 0) {
@@ -186,7 +191,18 @@ public class ObjectPoolUtil {
                     rejectionHandler.reject();
                 }
                 T t = supplier.get();
-                unit = new ObjectUnit<>(t, this);
+                ThreadLocal<T> tl = new ThreadLocal<>();
+                t = (T)ProxyUtil.generateCglibProxy(t, new ProxyConfig(interceptMethods, new ProxyCallback() {
+                    @Override
+                    public void before(Object obj, Method method, Object[] args) {
+                        if(tl.get() == null) {
+                            throw new RuntimeException("非法操作资源");
+                        }
+                    }
+                    @Override
+                    public void after(Object result) {}
+                }));
+                unit = new ObjectUnit<>(t, this, tl);
             }
             //使用队列中添加一个元素
             inUseList.add(unit);
@@ -235,15 +251,16 @@ public class ObjectPoolUtil {
     }
 
     public static class ObjectUnit<T> {
-        private final ThreadLocal<T> tl = new ThreadLocal<>();
-        private final Pool<T> pool;
-        private boolean inUse = false;
         private final T t;
+        private final Pool<T> pool;
+        private final ThreadLocal<T> tl;
+        private Thread bindThread;
         private long updateTime;
 
-        private ObjectUnit(T t, Pool<T> pool) {
+        private ObjectUnit(T t, Pool<T> pool, ThreadLocal<T> tl) {
             this.t = t;
             this.pool = pool;
+            this.tl = tl;
             updateTime = System.currentTimeMillis();
         }
 
@@ -257,30 +274,26 @@ public class ObjectPoolUtil {
 
         private void acquire() {
             //如果被使用中
-            if(inUse) {
+            if(bindThread != null) {
                 //使用者非当前线程
-                T t = tl.get();
-                if(t == null) {
-                    throw new RuntimeException("object already use by another thread!");
+                if(bindThread != Thread.currentThread()) {
+                    throw new RuntimeException("object already used by another thread!");
                 }
             } else {
                 //设置对象拥有线程
-                tl.set(t);
-                inUse = true;
+                bindThread = Thread.currentThread();
             }
+            tl.set(t);
             updateTime = System.currentTimeMillis();
         }
 
-        public boolean release() {
-            T t = tl.get();
-            if(t == null) {
-                logger.warn("object is already released by this thread or object is not belong to current thread");
-                return false;
+        public void release() {
+            if(bindThread != null && bindThread == Thread.currentThread()) {
+                tl.remove();
+                bindThread = null;
+                pool.release(this);
+                updateTime = System.currentTimeMillis();
             }
-            tl.remove();
-            inUse = false;
-            updateTime = System.currentTimeMillis();
-            return pool.release(this);
         }
     }
 

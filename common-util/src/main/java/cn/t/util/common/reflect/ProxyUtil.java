@@ -4,8 +4,11 @@ import cn.t.util.common.proxy.ProxyCallback;
 import cn.t.util.common.proxy.ProxyConfig;
 import net.sf.cglib.proxy.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
+import java.util.Comparator;
 
 
 /**
@@ -27,7 +30,40 @@ public class ProxyUtil {
         //设置多个拦截器(setCallbacks中的拦截器顺序一定要和callbackFilter中的顺序一致)
         enhancer.setCallbacks(new Callback[]{proxy, NoOp.INSTANCE});
         enhancer.setCallbackFilter(filter);
-        return enhancer.create();
+        Constructor<?>[] constructors = target.getClass().getDeclaredConstructors();
+        Arrays.sort(constructors, Comparator.comparingInt(Constructor::getParameterCount));
+        int paramCount = constructors[0].getParameterCount();
+        if(paramCount == 0) {
+            return enhancer.create();
+        } else {
+            return enhancer.create(constructors[0].getParameterTypes(), buildDefaultConstructorArguments(constructors[0].getParameterTypes()));
+        }
+    }
+
+    private static Object[] buildDefaultConstructorArguments(Class<?>[] types) {
+        Object[] args = new Object[types.length];
+        for (int i = 0; i < types.length; i++) {
+            if(types[i] == byte.class) {
+                args[i] = Byte.MIN_VALUE;
+            } else if(types[i] == short.class) {
+                args[i] = Short.MIN_VALUE;
+            } else if(types[i] == int.class) {
+                args[i] = Integer.MIN_VALUE;
+            } else if(types[i] == char.class) {
+                args[i] = Character.MIN_VALUE;
+            } else if(types[i] == float.class) {
+                args[i] = Float.MIN_VALUE;
+            } else if(types[i] == double.class) {
+                args[i] = Double.MIN_VALUE;
+            } else if(types[i] == long.class) {
+                args[i] = Long.MIN_VALUE;
+            } else if(types[i] == boolean.class) {
+                args[i] = Boolean.FALSE;
+            } else {
+                args[i] = null;
+            }
+        }
+        return args;
     }
 
     public static Object generateJdkProxy(Object target, ProxyConfig config) {
@@ -43,7 +79,9 @@ public class ProxyUtil {
             if (methods != null && methods.length != 0) {
                 String methodName = method.getName();
                 for (String m : methods) {
-                    if ("*".equals(methodName) || methodName.equals(m)) {
+                    if("*".equals(m)) {
+                        return true;
+                    } else if (methodName.equals(m)) {
                         return true;
                     }
                 }
@@ -85,7 +123,7 @@ public class ProxyUtil {
         @Override
         public Object intercept(Object obj, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
             callback.before(target, method, args);
-            Object result = method.invoke(target, args);
+            Object result = methodProxy.invoke(target, args);
             callback.after(result);
             return result;
         }

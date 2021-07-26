@@ -27,4 +27,12 @@ public class ProxyConfig {
     public void setProxyCallback(ProxyCallback proxyCallback) {
         this.proxyCallback = proxyCallback;
     }
+
+    public ProxyConfig() {
+    }
+
+    public ProxyConfig(String[] interceptMethods, ProxyCallback proxyCallback) {
+        this.interceptMethods = interceptMethods;
+        this.proxyCallback = proxyCallback;
+    }
 }
