@@ -54,7 +54,20 @@ public class DateUtil {
     }
 
     public static LocalDateTime getBeginDateTimeOfMonth() {
-        return LocalDate.now().with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
+        return getBeginDateTimeOfMonth(LocalDate.now());
+    }
+
+    public static LocalDateTime getBeginDateTimeOfMonth(int monthOffset) {
+        LocalDate now = LocalDate.now();
+        if(monthOffset != 0) {
+            now = now.plusMonths(monthOffset);
+        }
+        return getBeginDateTimeOfMonth(now);
+    }
+
+
+    public static LocalDateTime getBeginDateTimeOfMonth(LocalDate now) {
+        return now.with(TemporalAdjusters.firstDayOfMonth()).atStartOfDay();
     }
 
     public static LocalDateTime getBeginDateTimeOfToday() {
