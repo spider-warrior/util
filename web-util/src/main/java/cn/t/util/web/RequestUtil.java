@@ -35,8 +35,12 @@ public class RequestUtil {
         deleteCookie(response, null, cookieName);
     }
 
-    public static void deleteCookie(HttpServletResponse response, String path, String cookieName) throws UnsupportedEncodingException {
-        setCookie(response, null, path, cookieName, null, 0);
+    public static void deleteCookie(HttpServletResponse response, String domain, String cookieName) throws UnsupportedEncodingException {
+        deleteCookie(response, domain, "/", cookieName);
+    }
+
+    public static void deleteCookie(HttpServletResponse response, String domain, String path, String cookieName) throws UnsupportedEncodingException {
+        setCookie(response, domain, path, cookieName, null, 0);
     }
 
     public static void setCookie(HttpServletResponse response, String domain, String cookieName, String cookieValue, Integer maxAge) throws UnsupportedEncodingException {
