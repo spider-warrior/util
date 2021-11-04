@@ -22,7 +22,7 @@ public class NodeListIterable implements Iterable<Node> {
 
     private class NodeIterator implements Iterator<Node> {
 
-        private final Set<String> excludeNodeNames = new HashSet<>() {{
+        private final Set<String> excludeNodeNames = new HashSet<String>() {{
             add("#text");
         }};
 
