@@ -96,37 +96,7 @@
             </dependency>
             <dependency>
                 <groupId>cn.t</groupId>
-                <artifactId>spring-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.t</groupId>
-                <artifactId>expression-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.t</groupId>
                 <artifactId>http-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.t</groupId>
-                <artifactId>weixin-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.t</groupId>
-                <artifactId>dhcp-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.t</groupId>
-                <artifactId>nb-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.t</groupId>
-                <artifactId>jvm-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
