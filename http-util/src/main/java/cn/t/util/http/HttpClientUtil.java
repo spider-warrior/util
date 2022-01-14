@@ -114,7 +114,7 @@ public class HttpClientUtil {
 
     private static HttpResponseEntity executeGet(CloseableHttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
         if (!CollectionUtil.isEmpty(params)) {
-            uri += (uri.contains("?") ? encodeToParamString(params, encode) : "?" + encodeToParamString(params, encode));
+            uri += (uri.contains("?") ? "&" + encodeToParamString(params, encode) : "?" + encodeToParamString(params, encode));
         }
         HttpGet httpGet = new HttpGet(uri);
         setHeaders(httpGet, headers);
