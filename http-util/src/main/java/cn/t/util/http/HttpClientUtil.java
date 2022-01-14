@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -359,12 +358,12 @@ public class HttpClientUtil {
             } else if (ParamFormat.FORM_DATA == format) {
                 MultipartEntityBuilder builder = MultipartEntityBuilder.create();
                 builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-                builder.setCharset(StandardCharsets.UTF_8);
                 params.forEach((k, v) -> {
                     if (v instanceof File) {
                         File file = (File) v;
                         builder.addBinaryBody(k, file);
                     } else {
+                        builder.setCharset(Charset.defaultCharset());
                         builder.addTextBody(k, v.toString(), ContentType.create(ContentType.DEFAULT_TEXT.getMimeType(), "UTF-8"));
                     }
                 });
