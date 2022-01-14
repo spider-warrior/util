@@ -17,7 +17,7 @@ import java.util.*;
 public class FileUtilTest {
 
     public static String decode(String voteParam) throws Exception {
-        /**  密钥  **/
+        /*  密钥  **/
         String key = "wxsk123654789000";
         byte[] original = AesUtil.decrypt(Base64Util.decode(voteParam.getBytes()), key.getBytes(), 128);
         String[] split = new String(original).split("\\$");
