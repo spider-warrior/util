@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -377,7 +378,7 @@ public class HttpClientUtil {
             } else {
                 List<NameValuePair> paramMap = new ArrayList<>();
                 params.forEach((k, v) -> paramMap.add(new BasicNameValuePair(k, v == null ? "" : v.toString())));
-                request.setEntity(new UrlEncodedFormEntity(paramMap));
+                request.setEntity(new UrlEncodedFormEntity(paramMap, StandardCharsets.UTF_8));
             }
         }
     }
