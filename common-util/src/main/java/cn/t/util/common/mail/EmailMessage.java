@@ -1,4 +1,4 @@
-package cn.t.util.email;
+package cn.t.util.common.mail;
 
 import javax.mail.internet.InternetAddress;
 

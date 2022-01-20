@@ -1,4 +1,4 @@
-package cn.t.util.email.constants;
+package cn.t.util.common.mail;
 
 public enum MailHost {
 

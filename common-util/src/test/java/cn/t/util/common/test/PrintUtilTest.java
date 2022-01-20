@@ -6,10 +6,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-/**
- * @description: create: 2019-09-09 14:58
- * @author: yj
- **/
 public class PrintUtilTest {
 
     @Test

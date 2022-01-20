@@ -13,7 +13,7 @@
 
     <artifactId>util</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.12.RELEASE</version>
+    <version>1.0.13.RELEASE</version>
     <name>util</name>
     <description>util</description>
     <url>https://github.com/spider-warrior/util</url>
@@ -26,7 +26,6 @@
         <module>doc-util</module>
         <module>common-util</module>
         <module>web-util</module>
-        <module>email-util</module>
         <module>socket-util</module>
         <module>http-util</module>
         <module>internationalize-util</module>

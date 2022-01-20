@@ -1,4 +1,4 @@
-package cn.t.util.email;
+package cn.t.util.common.mail;
 
 import com.sun.mail.util.MailSSLSocketFactory;
 import org.slf4j.Logger;

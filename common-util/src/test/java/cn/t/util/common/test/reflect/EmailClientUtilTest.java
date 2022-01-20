@@ -1,9 +1,9 @@
-package cn.t.util.email.test;
+package cn.t.util.common.test.reflect;
 
-import cn.t.util.email.EmailClientUtil;
-import cn.t.util.email.EmailMessage;
-import cn.t.util.email.SenderConfig;
-import cn.t.util.email.constants.MailHost;
+import cn.t.util.common.mail.EmailClientUtil;
+import cn.t.util.common.mail.EmailMessage;
+import cn.t.util.common.mail.SenderConfig;
+import cn.t.util.common.mail.MailHost;
 import org.junit.Test;
 
 import javax.mail.internet.InternetAddress;
