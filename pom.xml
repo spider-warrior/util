@@ -22,7 +22,6 @@
         <module>security-util</module>
         <module>media-util</module>
         <module>io-util</module>
-        <module>society-util</module>
         <module>doc-util</module>
         <module>common-util</module>
         <module>web-util</module>
@@ -60,11 +59,6 @@
             </dependency>
             <dependency>
                 <groupId>cn.t</groupId>
-                <artifactId>society-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.t</groupId>
                 <artifactId>doc-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -81,11 +75,6 @@
             <dependency>
                 <groupId>cn.t</groupId>
                 <artifactId>web-util</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.t</groupId>
-                <artifactId>email-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
