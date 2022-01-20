@@ -40,6 +40,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -118,6 +119,10 @@ public class HttpClientUtil {
         HttpGet httpGet = new HttpGet(uri);
         setHeaders(httpGet, headers);
         return executeRequest(httpClient, httpGet);
+    }
+
+    public static HttpResponseEntity delete(String uri) throws IOException {
+        return delete(uri, Collections.emptyMap());
     }
 
     public static HttpResponseEntity delete(String uri, Map<String, ?> params) throws IOException {
