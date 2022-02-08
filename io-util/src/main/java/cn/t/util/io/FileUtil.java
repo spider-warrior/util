@@ -112,8 +112,12 @@ public class FileUtil {
         return System.getProperty("user.dir");
     }
 
-    public static String saveToTempDir(byte[] bytes, String contentType) throws IOException {
-        String path = appendFilePath(System.getProperty("java.io.tmpdir"), String.valueOf(System.currentTimeMillis()).concat(RandomUtil.randomString(5)).concat(".").concat(analyseImageTail(contentType)));
+    public static String randomTempDir() {
+        return appendFilePath(System.getProperty("java.io.tmpdir"), String.valueOf(System.currentTimeMillis()).concat(RandomUtil.randomString(5)));
+    }
+
+    public static String saveToTempDir(byte[] bytes, String fileName) throws IOException {
+        String path = appendFilePath(randomTempDir(), fileName);
         File file = new File(path);
         boolean success = file.createNewFile();
         if (!success) {
