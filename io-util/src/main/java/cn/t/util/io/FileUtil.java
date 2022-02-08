@@ -113,7 +113,7 @@ public class FileUtil {
     }
 
     public static String saveToTempDir(byte[] bytes, String contentType) throws IOException {
-        String path = appendFilePath(System.getProperty("java.io.tmpdir"), String.valueOf(System.currentTimeMillis()).concat(String.valueOf(System.currentTimeMillis()).concat(RandomUtil.randomString(5))).concat(".").concat(analyseImageTail(contentType)));
+        String path = appendFilePath(System.getProperty("java.io.tmpdir"), String.valueOf(System.currentTimeMillis()).concat(RandomUtil.randomString(5)).concat(".").concat(analyseImageTail(contentType)));
         File file = new File(path);
         boolean success = file.createNewFile();
         if (!success) {
