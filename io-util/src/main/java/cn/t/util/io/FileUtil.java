@@ -119,6 +119,12 @@ public class FileUtil {
     public static String saveToTempDir(byte[] bytes, String fileName) throws IOException {
         String path = appendFilePath(randomTempDir(), fileName);
         File file = new File(path);
+        if(!file.getParentFile().exists()) {
+            boolean success = file.getParentFile().mkdirs();
+            if(!success) {
+                logger.error("cannot create parent directory: {}", file.getParentFile().getCanonicalPath());
+            }
+        }
         boolean success = file.createNewFile();
         if (!success) {
             logger.error("cannot create new file at: {}", System.getProperty("java.io.tmpdir"));
