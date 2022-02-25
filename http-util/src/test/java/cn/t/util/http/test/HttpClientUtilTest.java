@@ -1,6 +1,5 @@
 package cn.t.util.http.test;
 
-import cn.t.util.common.HashUtil;
 import cn.t.util.http.*;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -56,10 +54,10 @@ public class HttpClientUtilTest {
     }
 
     @Test
-    public void encodeToParamStringTest() throws NoSuchAlgorithmException {
+    public void encodeToParamStringTest() {
         Map<String, Object> payload = new HashMap<>();
         payload.put("loginId", "362961910");
-        payload.put("passwd", HashUtil.md5("123456"));
+        payload.put("passwd", "123456");
         payload.put("pwd", "123456");
         payload.put("authCode", "a1b2c3d4");
         payload.put("auto", false);
