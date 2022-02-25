@@ -1,4 +1,9 @@
-package cn.t.util.security.message.digest.hmc;
+package cn.t.util.security.message.digest;
+
+import cn.t.util.security.message.AlgorithmName;
+
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
 
 /**
  * MAC(Message Authentication Code)
@@ -16,5 +21,14 @@ package cn.t.util.security.message.digest.hmc;
  * 6.发送方发送消息
  * 7.接收方消息鉴别
  */
+public class HmacUtil {
 
-
+    /**
+     * 转换encoded key
+     * @param keyBytes xxx
+     * @return xxx
+     */
+    public static Key convertSecretKey(byte[] keyBytes) {
+        return new SecretKeySpec(keyBytes, AlgorithmName.HMAC_MD5);
+    }
+}

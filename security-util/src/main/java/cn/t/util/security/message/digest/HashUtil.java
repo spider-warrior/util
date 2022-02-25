@@ -1,4 +1,4 @@
-package cn.t.util.common;
+package cn.t.util.security.message.digest;
 
 
 import cn.t.util.common.digital.HexUtil;

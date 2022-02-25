@@ -1,4 +1,4 @@
-package security.messagedigest.sha;
+package security.messagedigest;
 
 import cn.t.util.security.message.AlgorithmName;
 import org.apache.commons.codec.digest.DigestUtils;

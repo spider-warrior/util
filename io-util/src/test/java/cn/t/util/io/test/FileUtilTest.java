@@ -5,12 +5,10 @@ import cn.t.util.common.digital.HexUtil;
 import cn.t.util.io.FileUtil;
 import cn.t.util.security.message.base64.Base64Util;
 import cn.t.util.security.message.encryption.aes.AesUtil;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.Test;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLDecoder;
 import java.util.*;
 
@@ -203,4 +201,26 @@ public class FileUtilTest {
         System.out.println(FileUtil.extractFileExtension("a."));
         System.out.println(FileUtil.extractFileExtension("a.doc"));
     }
+
+    @Test
+    public void saveToFile() throws Exception {
+        String content = "123456\nabc";
+        FileOutputStream fos = new FileOutputStream(new File("D:\\tmp\\md5.txt"));
+        fos.write(content.getBytes());
+        fos.flush();
+        fos.close();
+    }
+
+
+    @Test
+    public void readFileMd5() throws Exception {
+//        FileInputStream fis = new FileInputStream(new File("D:\\tmp\\md5.txt"));
+//        int size = fis.available();
+//        byte[] bytes = new byte[size];
+//        fis.read(bytes);
+//        System.out.println(DigestUtils.md5Hex(bytes));
+//        System.out.println(DigestUtils.md5Hex(fis));
+        System.out.println(DigestUtils.md5Hex("123456\r\nabc"));
+    }
+
 }

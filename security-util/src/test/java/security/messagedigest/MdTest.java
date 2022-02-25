@@ -1,4 +1,4 @@
-package security.messagedigest.md;
+package security.messagedigest;
 
 import cn.t.util.security.message.AlgorithmName;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -48,12 +48,11 @@ public class MdTest {
         //添加Provider
         Security.addProvider(new BouncyCastleProvider());
         MessageDigest md = MessageDigest.getInstance(AlgorithmName.MD4);
-        md.getProvider();
         byte[] md4Bytes = md.digest(src.getBytes());
         System.out.println("BC MD4:  " + Hex.toHexString(md4Bytes));
     }
 
-    public static void bcMd5() throws Exception {
+    public static void bcMd5() {
         Digest digest = new MD5Digest();
         digest.update(src.getBytes(), 0, src.getBytes().length);
         byte[] md4Bytes = new byte[digest.getDigestSize()];

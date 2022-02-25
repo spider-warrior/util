@@ -2,7 +2,7 @@ package security.messagedigest.hmac;
 
 import cn.t.util.security.message.AlgorithmName;
 import cn.t.util.security.message.AlgorithmUtil;
-import cn.t.util.security.message.digest.hmc.HmacUtil;
+import cn.t.util.security.message.digest.HmacUtil;
 import org.bouncycastle.crypto.digests.MD5Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
