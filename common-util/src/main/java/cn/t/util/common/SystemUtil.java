@@ -38,6 +38,10 @@ public class SystemUtil {
         return getLocalIp(Inet4Address.class, isPrivate);
     }
 
+    public static byte[] getLocalIpV4Bytes(boolean isPrivate) {
+        return getLocalIpBytes(Inet4Address.class, isPrivate);
+    }
+
     public static String getCashedLocalPrivateIpV4() {
         return LOCAL_PRIVATE_IP_4;
     }
@@ -46,11 +50,15 @@ public class SystemUtil {
         return getLocalIp(Inet6Address.class, isPrivate);
     }
 
+    public static byte[] getLocalIpV6Bytes(boolean isPrivate) {
+        return getLocalIpBytes(Inet6Address.class, isPrivate);
+    }
+
     public static String getCashedLocalPrivateIpV6() {
         return LOCAL_PRIVATE_IP_6;
     }
 
-    private static String getLocalIp(Class<? extends InetAddress> clazz, boolean isPrivate) {
+    private static byte[] getLocalIpBytes(Class<? extends InetAddress> clazz, boolean isPrivate) {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             Deque<InetAddress> networkInterfaceStack = new LinkedList<>();
@@ -73,12 +81,17 @@ public class SystemUtil {
             }
             InetAddress inetAddress = networkInterfaceStack.peek();
             if(inetAddress == null) {
-                return "";
+                return new byte[0];
             }
-            return inetAddress.getHostAddress();
+            return inetAddress.getAddress();
         } catch (SocketException e) {
            throw new RuntimeException(e);
         }
+    }
+
+    private static String getLocalIp(Class<? extends InetAddress> clazz, boolean isPrivate) {
+        byte[] bytes = getLocalIpBytes(clazz, isPrivate);
+        return (bytes[0] & 0xff) + "." + (bytes[1] & 0xff) + "." + (bytes[2] & 0xff) + "." + (bytes[3] & 0xff);
     }
 
     public static byte[] convertHostToBytes(String host) throws UnknownHostException {
