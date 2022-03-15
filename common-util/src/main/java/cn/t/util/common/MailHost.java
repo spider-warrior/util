@@ -1,4 +1,4 @@
-package cn.t.util.common.mail;
+package cn.t.util.common;
 
 public enum MailHost {
 
