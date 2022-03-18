@@ -59,7 +59,7 @@ public class RequestUtil {
         if (cookieValue == null) {
             cookieValue = "";
         } else if (isEncode) {
-            cookieValue = URLEncoder.encode(cookieValue, StandardCharsets.UTF_8);
+            cookieValue = URLEncoder.encode(cookieValue, StandardCharsets.UTF_8.name());
         }
         Cookie cookie = new Cookie(cookieName, cookieValue);
         if (maxAge != null) {

@@ -6,9 +6,10 @@ import org.junit.Test;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.CyclicBarrier;
 
 public class SystemUtilTest {
 
@@ -26,15 +27,22 @@ public class SystemUtilTest {
 
     @Test
     public void getLocalIpv4Test() {
-        System.out.println("private: " + SystemUtil.getLocalIpV4(true));
         System.out.println("public: " + SystemUtil.getLocalIpV4(false));
+        System.out.println("private: " + SystemUtil.getLocalIpV4(true));
+        System.out.println("public: " + Arrays.toString(SystemUtil.getLocalIpV4Bytes(false)));
+        System.out.println("private: " + Arrays.toString(SystemUtil.getLocalIpV4Bytes(true)));
+        System.out.println("private: " + SystemUtil.getCashedLocalPrivateIpV4());
+        System.out.println(StandardCharsets.UTF_8.name());
     }
 
-    @Test
-    public void getLocalIpv6Test() {
-        System.out.println("private: " + SystemUtil.getLocalIpV6(true));
-        System.out.println("public: " + SystemUtil.getLocalIpV6(false));
-    }
+//    @Test
+//    public void getLocalIpv6Test() {
+//        System.out.println("public: " + SystemUtil.getLocalIpV6(false));
+//        System.out.println("private: " + SystemUtil.getLocalIpV6(true));
+//        System.out.println("public: " + Arrays.toString(SystemUtil.getLocalIpV6Bytes(false)));
+//        System.out.println("private: " + Arrays.toString(SystemUtil.getLocalIpV6Bytes(true)));
+//        System.out.println("private: " + SystemUtil.getCashedLocalPrivateIpV6());
+//    }
 
     @Test
     public void printAllAddress() throws SocketException {

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class SystemUtil {
 
     private static final String LOCAL_PRIVATE_IP_4 =  getLocalIpV4(true);
-    private static final String LOCAL_PRIVATE_IP_6 =  getLocalIpV6(true);
+//    private static final String LOCAL_PRIVATE_IP_6 =  getLocalIpV6(true);
 
     public static String getApplicationVar(String key) {
         return Optional.ofNullable(SystemUtil.getSysProperty(key)).orElseGet(() -> SystemUtil.getSysEnv(key));
@@ -46,17 +46,17 @@ public class SystemUtil {
         return LOCAL_PRIVATE_IP_4;
     }
 
-    public static String getLocalIpV6(boolean isPrivate) {
-        return getLocalIp(Inet6Address.class, isPrivate);
-    }
+//    public static String getLocalIpV6(boolean isPrivate) {
+//        return getLocalIp(Inet6Address.class, isPrivate);
+//    }
 
-    public static byte[] getLocalIpV6Bytes(boolean isPrivate) {
-        return getLocalIpBytes(Inet6Address.class, isPrivate);
-    }
+//    public static byte[] getLocalIpV6Bytes(boolean isPrivate) {
+//        return getLocalIpBytes(Inet6Address.class, isPrivate);
+//    }
 
-    public static String getCashedLocalPrivateIpV6() {
-        return LOCAL_PRIVATE_IP_6;
-    }
+//    public static String getCashedLocalPrivateIpV6() {
+//        return LOCAL_PRIVATE_IP_6;
+//    }
 
     private static byte[] getLocalIpBytes(Class<? extends InetAddress> clazz, boolean isPrivate) {
         try {
@@ -71,8 +71,7 @@ public class SystemUtil {
                 Enumeration<InetAddress> enumIpAdd = ni.getInetAddresses();
                 while (enumIpAdd.hasMoreElements()) {
                     InetAddress inetAddress = enumIpAdd.nextElement();
-                    if (!inetAddress.isLinkLocalAddress()
-                        && (isPrivate == inetAddress.isSiteLocalAddress())
+                    if ((isPrivate == inetAddress.isSiteLocalAddress())
                         && clazz.isAssignableFrom(inetAddress.getClass())
                     ) {
                         networkInterfaceStack.push(inetAddress);
@@ -81,9 +80,10 @@ public class SystemUtil {
             }
             InetAddress inetAddress = networkInterfaceStack.peek();
             if(inetAddress == null) {
-                return new byte[0];
+                return null;
+            } else {
+                return inetAddress.getAddress();
             }
-            return inetAddress.getAddress();
         } catch (SocketException e) {
            throw new RuntimeException(e);
         }
@@ -91,7 +91,30 @@ public class SystemUtil {
 
     private static String getLocalIp(Class<? extends InetAddress> clazz, boolean isPrivate) {
         byte[] bytes = getLocalIpBytes(clazz, isPrivate);
-        return (bytes[0] & 0xff) + "." + (bytes[1] & 0xff) + "." + (bytes[2] & 0xff) + "." + (bytes[3] & 0xff);
+        if(bytes == null || bytes.length == 0) {
+            return null;
+        } else {
+            return (bytes[0] & 0xff) + "." + (bytes[1] & 0xff) + "." + (bytes[2] & 0xff) + "." + (bytes[3] & 0xff);
+        }
+//        if(bytes == null || bytes.length == 0) {
+//            return null;
+//        } else {
+//            if(bytes.length == 4) {
+//                return (bytes[0] & 0xff) + "." + (bytes[1] & 0xff) + "." + (bytes[2] & 0xff) + "." + (bytes[3] & 0xff);
+//            } else if(bytes.length == 16) {
+//                StringBuilder sb = new StringBuilder(39);
+//                for (int i = 0; i < (16 / 2); i++) {
+//                    sb.append(Integer.toHexString(((bytes[i<<1]<<8) & 0xff00)
+//                        | (bytes[(i<<1)+1] & 0xff)));
+//                    if (i < (16 / 2) -1 ) {
+//                        sb.append(":");
+//                    }
+//                }
+//                return sb.toString();
+//            } else {
+//                return null;
+//            }
+//        }
     }
 
     public static byte[] convertHostToBytes(String host) throws UnknownHostException {
