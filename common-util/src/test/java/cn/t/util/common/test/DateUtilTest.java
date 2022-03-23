@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
@@ -61,8 +62,11 @@ public class DateUtilTest {
 
     @Test
     public void test() {
-        System.out.println(DateUtil.getBeginTimestampOfYesterday());
-        System.out.println(DateUtil.getBeginTimestampOfToday());
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
+        System.out.println(LocalDateTime.parse("2022-03-23T10:50:21+08:00", dateTimeFormatter));
+        System.out.println(ZonedDateTime.now().format(dateTimeFormatter));
+//        System.out.println(DateUtil.getBeginTimestampOfYesterday());
+//        System.out.println(DateUtil.getBeginTimestampOfToday());
     }
 
     @Test
