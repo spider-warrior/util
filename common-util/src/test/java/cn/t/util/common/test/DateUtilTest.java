@@ -65,6 +65,11 @@ public class DateUtilTest {
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
         System.out.println(LocalDateTime.parse("2022-03-23T10:50:21+08:00", dateTimeFormatter));
         System.out.println(ZonedDateTime.now().format(dateTimeFormatter));
+
+        dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssZ");
+        System.out.println(LocalDateTime.parse("2022-03-22 14:45:55+0800", dateTimeFormatter));
+
+
 //        System.out.println(DateUtil.getBeginTimestampOfYesterday());
 //        System.out.println(DateUtil.getBeginTimestampOfToday());
     }
