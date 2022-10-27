@@ -16,7 +16,7 @@ import java.util.Arrays;
 public class GetCertificateTest {
     public static void main(String[] args) throws Exception {
 //        URL httpsURL = new URL("https://www.baidu.com/");
-        URL httpsURL = new URL("https://ifenxi.net/");
+        URL httpsURL = new URL("https://ifenxi.com/");
 //        URL httpsURL = new URL("https://www.chiina315.com/");
         //validate
         HttpsURLConnection connection = (HttpsURLConnection) httpsURL.openConnection();

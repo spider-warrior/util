@@ -23,7 +23,7 @@ public class DocToHtmlTest {
         loadLicense(licenseFilePath);
 
 //        String docPath = workDir + "20210524-采购数字化厂商全景报告.docx";
-        String docPath = workDir + "购物中心数字化趋势报告20210621.docx";
+        String docPath = workDir + "2022爱分析･银行数字化实践报告（规范版）v4-20220712.docx";
         // Load the document from disk.
         Document doc = new Document(new FileInputStream(docPath));
         doc.save(output + "Document_out.html", SaveFormat.HTML);

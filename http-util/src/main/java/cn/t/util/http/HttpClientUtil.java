@@ -396,7 +396,7 @@ public class HttpClientUtil {
     private static RequestConfig defaultRequestConfig() {
         return RequestConfig.custom()
             .setConnectTimeout(1500)
-            .setSocketTimeout(5000)
+            .setSocketTimeout(20000)
             .setCookieSpec(CookieSpecs.STANDARD)
             .build();
     }

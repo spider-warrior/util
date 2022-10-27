@@ -10,7 +10,8 @@ public class HexUtilTest {
     @Test
     public void testEncodeToString() {
 //        String str = "123456789";
-        String str = "POST";
+//        String str = "POST";
+        String str = "none";
         System.out.println(HexUtil.bytesToHex(str.getBytes()));
     }
 
