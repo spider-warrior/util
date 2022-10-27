@@ -25,7 +25,7 @@
         <module>web-util</module>
         <module>socket-util</module>
         <module>http-util</module>
-        <module>internationalize-util</module>
+        <module>i18n-util</module>
         <module>validator-util</module>
     </modules>
 
