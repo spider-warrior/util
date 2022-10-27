@@ -12,6 +12,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.conn.ManagedHttpClientConnectionFactory;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.io.DefaultHttpRequestWriterFactory;
 import org.apache.http.impl.io.DefaultHttpResponseParserFactory;
@@ -23,6 +24,7 @@ public class HttpClientUtilCustomizer {
     public static SSLConnectionSocketFactory sslConnectionSocketFactory = SSLConnectionSocketFactory.getSystemSocketFactory();
     public static DefaultHttpRequestWriterFactory defaultHttpRequestWriterFactory = DefaultHttpRequestWriterFactory.INSTANCE;
     public static DefaultHttpResponseParserFactory defaultHttpResponseParserFactory = DefaultHttpResponseParserFactory.INSTANCE;
+    public static ManagedHttpClientConnectionFactory defaultHttpConnectionFactory = new ManagedHttpClientConnectionFactory(defaultHttpRequestWriterFactory, defaultHttpResponseParserFactory);
     public static DnsResolver dnsResolver = SystemDefaultDnsResolver.INSTANCE;
     public static ConnectionReuseStrategy connectionReuseStrategy = DefaultConnectionReuseStrategy.INSTANCE;
     public static ConnectionKeepAliveStrategy connectionKeepAliveStrategy = DefaultConnectionKeepAliveStrategy.INSTANCE;
