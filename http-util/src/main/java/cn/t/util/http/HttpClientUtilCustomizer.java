@@ -38,6 +38,7 @@ public class HttpClientUtilCustomizer {
     public static int maxPerRoute = 5;
     public static int validateAfterInactivity = 5000;
     public static int maxIdleTimeInSeconds = 30;
+    public static int maxRedirects = 5;
     public static String cookieSpec = CookieSpecs.STANDARD;
     public static HttpHost proxy = null;
 

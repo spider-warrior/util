@@ -25,9 +25,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
+import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
-import org.apache.http.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,14 +61,14 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpClientUtil {
 
+    private static final Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
+
     private static final SocketConfig defaultSocketConfig = createSocketConfig();
     private static final PoolingHttpClientConnectionManager defaultConnectionManager = createConnectionManager();
     private static final PoolingHttpClientConnectionManager defaultConnectionWithoutSslCertificateCheckManager = createNoneSslCertificateCheckConnectionManager();
     private static final RequestConfig defaultRequestConfig = createRequestConfig();
     private static final CloseableHttpClient defaultHttpClient = createDefaultHttpClient();
     private static final CloseableHttpClient defaultHttpClientWithoutSslCertificateCheck = createDefaultHttpClientWithoutSslCertificateCheckClient();
-
-    private static final Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
 
     public static HttpResponseEntity get(String uri) throws IOException {
         return get(uri, null, null, false);
@@ -468,9 +468,7 @@ public class HttpClientUtil {
                 }
             });
         } else {
-            param.forEach((k, v) -> {
-                builder.append("&").append(k).append("=").append(v);
-            });
+            param.forEach((k, v) -> builder.append("&").append(k).append("=").append(v));
         }
         return builder.deleteCharAt(0).toString();
     }
@@ -502,35 +500,29 @@ public class HttpClientUtil {
         return manager;
     }
 
-    private static String[] split(final String s) {
-        if (TextUtils.isBlank(s)) {
-            return null;
-        }
-        return s.split(" *, *");
-    }
-
     private static PoolingHttpClientConnectionManager createNoneSslCertificateCheckConnectionManager() {
-        SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(
-            (javax.net.ssl.SSLSocketFactory) javax.net.ssl.SSLSocketFactory.getDefault(),
-            split(System.getProperty("https.protocols")),
-            split(System.getProperty("https.cipherSuites")),
-            NoopHostnameVerifier.INSTANCE);
-
-        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
-            .<ConnectionSocketFactory>create()
-            .register("http", HttpClientUtilCustomizer.plainConnectionSocketFactory)
-            .register("https", sslConnectionSocketFactory)
-            .build();
-
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry, HttpClientUtilCustomizer.defaultHttpConnectionFactory, HttpClientUtilCustomizer.dnsResolver);
-        manager.setMaxTotal(HttpClientUtilCustomizer.maxTotal);
-        manager.setDefaultMaxPerRoute(HttpClientUtilCustomizer.maxPerRoute);
-        manager.setValidateAfterInactivity(HttpClientUtilCustomizer.validateAfterInactivity);
-        //默认socket配置
-        manager.setDefaultSocketConfig(defaultSocketConfig);
-        return manager;
+        try {
+            SSLContextBuilder builder = new SSLContextBuilder();
+            builder.loadTrustMaterial(null, (chain, authType) -> true);
+            SSLContext sslContext = builder.build();
+            SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+            Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
+                .<ConnectionSocketFactory>create()
+                .register("http", HttpClientUtilCustomizer.plainConnectionSocketFactory)
+                .register("https", sslConnectionSocketFactory)
+                .build();
+            PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry, HttpClientUtilCustomizer.defaultHttpConnectionFactory, HttpClientUtilCustomizer.dnsResolver);
+            manager.setMaxTotal(HttpClientUtilCustomizer.maxTotal);
+            manager.setDefaultMaxPerRoute(HttpClientUtilCustomizer.maxPerRoute);
+            manager.setValidateAfterInactivity(HttpClientUtilCustomizer.validateAfterInactivity);
+            //默认socket配置
+            manager.setDefaultSocketConfig(defaultSocketConfig);
+            return manager;
+        } catch (Exception e) {
+            logger.warn("NoneSslCertificateCheckConnectionManager创建失败", e);
+            return defaultConnectionManager;
+        }
     }
-
 
     private static RequestConfig createRequestConfig() {
         //默认请求配置
@@ -538,6 +530,7 @@ public class HttpClientUtil {
             .setConnectTimeout(HttpClientUtilCustomizer.connectTimeout)
             .setSocketTimeout(HttpClientUtilCustomizer.soTimeout)
             .setConnectionRequestTimeout(HttpClientUtilCustomizer.connectionRequestTimeout)
+            .setMaxRedirects(HttpClientUtilCustomizer.maxRedirects)
             .setCookieSpec(HttpClientUtilCustomizer.cookieSpec)
             .setProxy(HttpClientUtilCustomizer.proxy)
             .build();
@@ -553,7 +546,6 @@ public class HttpClientUtil {
             .setConnectionReuseStrategy(HttpClientUtilCustomizer.connectionReuseStrategy)
             .setKeepAliveStrategy(HttpClientUtilCustomizer.connectionKeepAliveStrategy)
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
-            .setSSLHostnameVerifier(HttpClientUtilCustomizer.hostnameVerifier)
             .build();
     }
     private static CloseableHttpClient createDefaultHttpClientWithoutSslCertificateCheckClient() {
@@ -566,7 +558,6 @@ public class HttpClientUtil {
             .setConnectionReuseStrategy(HttpClientUtilCustomizer.connectionReuseStrategy)
             .setKeepAliveStrategy(HttpClientUtilCustomizer.connectionKeepAliveStrategy)
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
-            .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
             .build();
     }
 

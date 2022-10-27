@@ -87,9 +87,8 @@ public class HttpClientUtilTest {
 
     @Test
     public void selfCertificateGetTest() throws Exception {
-//        String uri = "https://liby.ltd/1.png";
-//        String uri = "http://liby.ltd/";
-        String uri = "https://liby.ltd/";
+        String uri = "http://liby.ltd/";
+//        String uri = "https://liby.ltd/";
 //        String uri = "https://www.baidu.com";
         HttpResponseEntity entity = HttpClientUtil.get(uri, Collections.emptyMap());
         System.out.println(entity);
@@ -114,6 +113,7 @@ public class HttpClientUtilTest {
     public void getBaiduIndexTest() throws IOException {
         String url = "https://www.baidu.com";
         HttpResponseEntity responseEntity = HttpClientUtil.get(url);
+        System.out.println(responseEntity);
         logger.info("status: {}", responseEntity.getCode());
         logger.info("content type: {}", responseEntity.getContentType());
         logger.info("content: {}", responseEntity.getContent());
