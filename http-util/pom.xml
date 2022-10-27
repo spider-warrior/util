@@ -26,15 +26,6 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.t</groupId>
-            <artifactId>doc-util</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>
