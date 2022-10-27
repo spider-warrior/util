@@ -2,7 +2,7 @@ package cn.t.util.doc.test;
 
 import cn.t.util.common.RandomUtil;
 import cn.t.util.doc.ExcelUtil;
-import cn.t.util.io.FileUtil;
+import cn.t.util.common.FileUtil;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
 

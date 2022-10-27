@@ -1,20 +1,16 @@
 package cn.t.util.doc.test;
 
-import cn.t.util.common.RandomUtil;
-import cn.t.util.doc.ExcelUtil;
 import cn.t.util.doc.XmlUtil;
 import cn.t.util.doc.xml.MixedTypeNodeForeach;
 import cn.t.util.doc.xml.NodeCallback;
 import cn.t.util.doc.xml.NodeForeachCallback;
 import cn.t.util.doc.xml.NodeListIterable;
-import cn.t.util.io.FileUtil;
-import org.apache.poi.ss.usermodel.Workbook;
+import cn.t.util.common.FileUtil;
 import org.junit.Test;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

@@ -4,7 +4,7 @@ import cn.t.util.common.JsonUtil;
 import cn.t.util.doc.ExcelUtil;
 import cn.t.util.http.HttpClientUtil;
 import cn.t.util.http.HttpResponseEntity;
-import cn.t.util.io.FileUtil;
+import cn.t.util.common.FileUtil;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;

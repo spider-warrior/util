@@ -1,4 +1,4 @@
-package cn.t.util.io;
+package cn.t.util.common.constants;
 
 import java.io.File;
 

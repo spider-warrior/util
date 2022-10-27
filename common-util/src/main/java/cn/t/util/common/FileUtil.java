@@ -1,9 +1,5 @@
-package cn.t.util.io;
+package cn.t.util.common;
 
-import cn.t.util.common.ArrayUtil;
-import cn.t.util.common.CollectionUtil;
-import cn.t.util.common.RandomUtil;
-import cn.t.util.common.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
