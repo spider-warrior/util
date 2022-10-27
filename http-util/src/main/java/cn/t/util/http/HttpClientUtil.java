@@ -11,6 +11,10 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.*;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
+import org.apache.http.config.SocketConfig;
+import org.apache.http.conn.HttpConnectionFactory;
+import org.apache.http.conn.ManagedHttpClientConnection;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -19,6 +23,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.*;
+import org.apache.http.impl.conn.ManagedHttpClientConnectionFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
@@ -44,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * http重定向
@@ -393,21 +399,6 @@ public class HttpClientUtil {
         }
     }
 
-    private static RequestConfig defaultRequestConfig() {
-        return RequestConfig.custom()
-            .setConnectTimeout(1500)
-            .setSocketTimeout(20000)
-            .setCookieSpec(CookieSpecs.STANDARD)
-            .build();
-    }
-
-    private static CloseableHttpClient createDefaultHttpClient() {
-        return HttpClientBuilder
-            .create()
-            .setDefaultRequestConfig(defaultRequestConfig())
-            .build();
-    }
-
     private static CloseableHttpClient createHttpClientWithoutCertificateCheck() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
         SSLContextBuilder builder = new SSLContextBuilder();
         builder.loadTrustMaterial(null, (chain, authType) -> true);
@@ -416,7 +407,7 @@ public class HttpClientUtil {
             .custom()
             .setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE)
             .setSSLSocketFactory(new SSLConnectionSocketFactory(sslContext))
-            .setDefaultRequestConfig(defaultRequestConfig()).build();
+            .build();
     }
 
     private static CloseableHttpClient createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws KeyManagementException {
@@ -439,7 +430,6 @@ public class HttpClientUtil {
         builder.setConnectionManager(new PoolingHttpClientConnectionManager(registry));
         builder.setDefaultRequestConfig(RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build());
         return builder.build();
-
     }
 
     private static HttpResponseEntity buildHttpResponseEntity(CloseableHttpResponse response, HttpContext context) throws IOException {
@@ -498,6 +488,47 @@ public class HttpClientUtil {
 
     private static boolean isStringContent(ContentType ct) {
         return ct != null && STRING_CONTENT_LIST.parallelStream().anyMatch(t -> t.getMimeType().equalsIgnoreCase(ct.getMimeType()));
+    }
+
+    private static CloseableHttpClient createDefaultHttpClient() {
+        Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
+            .<ConnectionSocketFactory>create()
+            .register("http", HttpClientUtilCustomizer.plainConnectionSocketFactory)
+            .register("https", HttpClientUtilCustomizer.sslConnectionSocketFactory)
+            .build();
+        HttpConnectionFactory<HttpRoute, ManagedHttpClientConnection> connectionFactory = new ManagedHttpClientConnectionFactory(
+            HttpClientUtilCustomizer.defaultHttpRequestWriterFactory,
+            HttpClientUtilCustomizer.defaultHttpResponseParserFactory);
+        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry, connectionFactory, HttpClientUtilCustomizer.dnsResolver);
+        manager.setMaxTotal(HttpClientUtilCustomizer.maxTotal);
+        manager.setDefaultMaxPerRoute(HttpClientUtilCustomizer.maxPerRoute);
+        manager.setValidateAfterInactivity(HttpClientUtilCustomizer.validateAfterInactivity);
+        //默认socket配置
+        SocketConfig defaultSocketConfig = SocketConfig
+            .custom()
+            .setSoTimeout(HttpClientUtilCustomizer.soTimeout)
+            .setTcpNoDelay(HttpClientUtilCustomizer.tcpNoDelay)
+            .build();
+        manager.setDefaultSocketConfig(defaultSocketConfig);
+        //默认请求配置
+        RequestConfig defaultRequestConfig = RequestConfig.custom()
+            .setConnectTimeout(HttpClientUtilCustomizer.connectTimeout)
+            .setSocketTimeout(HttpClientUtilCustomizer.soTimeout)
+            .setConnectionRequestTimeout(HttpClientUtilCustomizer.connectionRequestTimeout)
+            .setCookieSpec(HttpClientUtilCustomizer.cookieSpec)
+            .setProxy(HttpClientUtilCustomizer.proxy)
+            .build();
+        return HttpClients.custom()
+            .setConnectionManager(manager)
+            .setConnectionManagerShared(false)
+            .evictIdleConnections(HttpClientUtilCustomizer.maxIdleTimeInSeconds, TimeUnit.SECONDS)
+            .evictExpiredConnections()
+            .setDefaultRequestConfig(defaultRequestConfig)
+            .setConnectionReuseStrategy(HttpClientUtilCustomizer.connectionReuseStrategy)
+            .setKeepAliveStrategy(HttpClientUtilCustomizer.connectionKeepAliveStrategy)
+            .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
+            .setSSLHostnameVerifier(HttpClientUtilCustomizer.hostnameVerifier)
+            .build();
     }
 
     private static final List<ContentType> STRING_CONTENT_LIST = new ArrayList<>();

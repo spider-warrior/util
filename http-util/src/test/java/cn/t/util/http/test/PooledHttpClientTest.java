@@ -62,7 +62,9 @@ public class PooledHttpClientTest {
         //创建池化连接管理器
         PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry, connectionFactory, dnsResolver);
         //默认为Socket配置
-        SocketConfig defaultSocketConfig = SocketConfig.custom().setTcpNoDelay(true).build();
+        SocketConfig defaultSocketConfig = SocketConfig
+            .custom()
+            .setTcpNoDelay(true).build();
         manager.setDefaultSocketConfig(defaultSocketConfig);
         //设置整个连接池的最大连接数
         manager.setMaxTotal(100);
