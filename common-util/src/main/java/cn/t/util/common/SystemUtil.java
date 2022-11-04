@@ -121,6 +121,16 @@ public class SystemUtil {
         return InetAddress.getByName(host).getAddress();
     }
 
+    public static boolean isSiteLocalAddress(byte[] ipParts) {
+        if(ipParts.length != 4) {
+            return false;
+        }
+        int ipParts0 = ipParts[0] & 0xFF;
+        return ipParts0 == 10
+            || ipParts0 == 172 && ipParts[1] == 16
+            || ipParts0 == 192 && (ipParts[1] & 0xFF) == 168;
+    }
+
     public static void showMtu() throws SocketException {
         Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
         while (en.hasMoreElements()) {
