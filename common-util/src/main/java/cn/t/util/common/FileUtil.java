@@ -94,8 +94,11 @@ public class FileUtil {
     public static byte[] getFileBytes(String path) throws IOException {
         try (BufferedInputStream bis = getBufferedInputStream(path)) {
             byte[] content = new byte[bis.available()];
-            int length = bis.read(content);
-            logger.debug("read file length: {}", length);
+            int offset = 0;
+            int length;
+            while ((length = bis.read(content, offset, content.length - offset)) > 0) {
+                offset+=length;
+            }
             return content;
         }
     }
