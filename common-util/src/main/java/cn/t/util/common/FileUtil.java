@@ -68,35 +68,23 @@ public class FileUtil {
         return null;
     }
 
-    public static FileInputStream getFileInputStream(String path) throws FileNotFoundException {
-        logger.debug("load input stream by file path {}", path);
-        return new FileInputStream(path);
-    }
-
-    public static DataInputStream getResourceDataInputStream(String path) throws FileNotFoundException {
-        logger.debug("load input stream by file path {}", path);
-        return new DataInputStream(getFileInputStream(path));
-    }
 
     public static FileReader getFileReader(String path) throws FileNotFoundException {
         logger.debug("load input stream by file path {}", path);
         return new FileReader(path);
     }
 
-    public static BufferedInputStream getBufferedInputStream(String path) throws FileNotFoundException {
-        return new BufferedInputStream(getFileInputStream(path));
-    }
 
     public static BufferedReader getBufferedReader(String path) throws FileNotFoundException {
         return new BufferedReader(getFileReader(path));
     }
 
-    public static byte[] getFileBytes(String path) throws IOException {
-        try (BufferedInputStream bis = getBufferedInputStream(path)) {
-            byte[] content = new byte[bis.available()];
+    public static byte[] getFileBytes(File file) throws IOException {
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            byte[] content = new byte[inputStream.available()];
             int offset = 0;
             int length;
-            while ((length = bis.read(content, offset, content.length - offset)) > 0) {
+            while ((length = inputStream.read(content, offset, content.length - offset)) > 0) {
                 offset+=length;
             }
             return content;
@@ -203,7 +191,7 @@ public class FileUtil {
     public static String getMimeType(String path) throws IOException {
 
         try (
-            BufferedInputStream bis = getBufferedInputStream(path)
+            InputStream bis = Files.newInputStream(Paths.get(path))
         ) {
             String mineType = URLConnection.guessContentTypeFromStream(bis);
             if (mineType == null) {
@@ -281,7 +269,7 @@ public class FileUtil {
     public static void zip(File outputFile, Map<String, List<String>> pathMappings) throws IOException {
         if(initFile(outputFile)) {
             try (
-                OutputStream os = new FileOutputStream(outputFile)
+                OutputStream os = Files.newOutputStream(outputFile.toPath())
             ){
                 zip(os, pathMappings);
             }
@@ -291,7 +279,7 @@ public class FileUtil {
     public static void zipWithRename(File outputFile, Map<String, List<Map.Entry<String, String>>> pathMappings) throws IOException {
         if(initFile(outputFile)) {
             try (
-                OutputStream os = new FileOutputStream(outputFile)
+                OutputStream os = Files.newOutputStream(outputFile.toPath())
             ){
                 zipWithRename(os, pathMappings);
             }
