@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 public class SystemUtil {
 
     private static final String LOCAL_PRIVATE_IP_4 =  getLocalIpV4(true);
-//    private static final String LOCAL_PRIVATE_IP_6 =  getLocalIpV6(true);
 
     public static String getApplicationVar(String key) {
         return Optional.ofNullable(SystemUtil.getSysProperty(key)).orElseGet(() -> SystemUtil.getSysEnv(key));
@@ -46,17 +45,20 @@ public class SystemUtil {
         return LOCAL_PRIVATE_IP_4;
     }
 
-//    public static String getLocalIpV6(boolean isPrivate) {
-//        return getLocalIp(Inet6Address.class, isPrivate);
-//    }
-
-//    public static byte[] getLocalIpV6Bytes(boolean isPrivate) {
-//        return getLocalIpBytes(Inet6Address.class, isPrivate);
-//    }
-
-//    public static String getCashedLocalPrivateIpV6() {
-//        return LOCAL_PRIVATE_IP_6;
-//    }
+    private static NetworkInterface defaultNetworkInterface() {
+        try(DatagramSocket datagramSocket = new DatagramSocket()) {
+            datagramSocket.connect(InetAddress.getByAddress(new byte[]{1, 1, 1, 1}), 0);
+            return NetworkInterface.getByInetAddress(datagramSocket.getLocalAddress());
+        } catch (Exception e) {
+            e.printStackTrace();
+            try {
+                InetAddress ipAddress = InetAddress.getLocalHost();
+                return NetworkInterface.getByInetAddress(ipAddress);
+            } catch (UnknownHostException | SocketException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
 
     private static byte[] getLocalIpBytes(Class<? extends InetAddress> clazz, boolean isPrivate) {
         try {
@@ -64,7 +66,6 @@ public class SystemUtil {
             Deque<InetAddress> networkInterfaceStack = new LinkedList<>();
             while (interfaces.hasMoreElements()) {
                 NetworkInterface ni = interfaces.nextElement();
-                // filters out 127.0.0.1 and inactive interfaces
                 if(ni.isLoopback() || !ni.isUp()) {
                     continue;
                 }
@@ -96,25 +97,6 @@ public class SystemUtil {
         } else {
             return (bytes[0] & 0xff) + "." + (bytes[1] & 0xff) + "." + (bytes[2] & 0xff) + "." + (bytes[3] & 0xff);
         }
-//        if(bytes == null || bytes.length == 0) {
-//            return null;
-//        } else {
-//            if(bytes.length == 4) {
-//                return (bytes[0] & 0xff) + "." + (bytes[1] & 0xff) + "." + (bytes[2] & 0xff) + "." + (bytes[3] & 0xff);
-//            } else if(bytes.length == 16) {
-//                StringBuilder sb = new StringBuilder(39);
-//                for (int i = 0; i < (16 / 2); i++) {
-//                    sb.append(Integer.toHexString(((bytes[i<<1]<<8) & 0xff00)
-//                        | (bytes[(i<<1)+1] & 0xff)));
-//                    if (i < (16 / 2) -1 ) {
-//                        sb.append(":");
-//                    }
-//                }
-//                return sb.toString();
-//            } else {
-//                return null;
-//            }
-//        }
     }
 
     public static byte[] convertHostToBytes(String host) throws UnknownHostException {
@@ -129,15 +111,6 @@ public class SystemUtil {
         return ipParts0 == 10
             || ipParts0 == 172 && ipParts[1] == 16
             || ipParts0 == 192 && (ipParts[1] & 0xFF) == 168;
-    }
-
-    public static void showMtu() throws SocketException {
-        Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
-        while (en.hasMoreElements()) {
-            NetworkInterface ni = en.nextElement();
-            System.out.println(" Display Name = " + ni.getDisplayName());
-            System.out.println(" MTU = " + ni.getMTU());
-        }
     }
 
     public static long now() {
