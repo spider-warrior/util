@@ -57,7 +57,7 @@
             </dependency>
             <dependency>
                 <groupId>cn.t</groupId>
-                <artifactId>internationalize-util</artifactId>
+                <artifactId>i18n-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
