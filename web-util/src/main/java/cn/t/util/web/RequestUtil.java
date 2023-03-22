@@ -3,7 +3,6 @@ package cn.t.util.web;
 import cn.t.util.common.ArrayUtil;
 import cn.t.util.common.RegexUtil;
 import cn.t.util.common.StringUtil;
-import cn.t.util.common.SystemUtil;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +40,14 @@ public class RequestUtil {
 
     public static void deleteCookie(HttpServletResponse response, String domain, String path, String cookieName) throws UnsupportedEncodingException {
         setCookie(response, domain, path, cookieName, null, 0);
+    }
+
+    public static void setCookie(HttpServletResponse response, String domain, String cookieName, String cookieValue) throws UnsupportedEncodingException {
+        setCookie(response, domain, null, cookieName, cookieValue, null);
+    }
+
+    public static void setCookie(HttpServletResponse response, String domain, String cookieName, String cookieValue, CookieOption... options) throws UnsupportedEncodingException {
+        setCookie(response, domain, null, cookieName, cookieValue, null, options);
     }
 
     public static void setCookie(HttpServletResponse response, String domain, String cookieName, String cookieValue, Integer maxAge) throws UnsupportedEncodingException {
@@ -123,21 +130,18 @@ public class RequestUtil {
     }
 
     public String getRemoteAddress(HttpServletRequest request) {
-        String ipAddress = request.getHeader("X-FORWARDED-FOR");
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+        String ipAddress = request.getHeader("X-Forwarded-For");
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
         }
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("WL-Proxy-Client-IP");
         }
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("X-Real-IP");
         }
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
-            if (ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1")) {
-                ipAddress = SystemUtil.getCashedLocalPrivateIpV4();
-            }
         }
         //对于通过多个代理的情况，第一个IP为客户端真实IP,多个IP按照','分割
         if (ipAddress != null && ipAddress.contains(",")) {
