@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class RequestUtil {
 
-    private static final Pattern PATTERN = Pattern.compile("https?://(.*?)/");
+    private static final Pattern PATTERN = Pattern.compile("https?://([^/]+)");
 
     public static String getCookie(HttpServletRequest request, String cookieName) {
         Cookie[] cookies = request.getCookies();
@@ -81,17 +81,24 @@ public class RequestUtil {
         response.addCookie(cookie);
     }
 
-    public static String getTopDomain(HttpServletRequest request) {
-        return getTopDomain(request.getRequestURL().toString().toLowerCase());
+    public static String extractTopDomain(HttpServletRequest request) {
+        return extractTopDomain(request.getRequestURL().toString().toLowerCase());
     }
 
-    public static String getTopDomain(String url) {
+    public static String extractDomain(String url) {
         Matcher matcher = PATTERN.matcher(url);
-        boolean success = matcher.find();
-        if(!success) {
-            throw new RuntimeException("could not find domain for: " + url);
+        if(matcher.find()) {
+            return matcher.group(1);
         } else {
-            String domain = matcher.group(1);
+            return null;
+        }
+    }
+
+    public static String extractTopDomain(String url) {
+        String domain = extractDomain(url);
+        if(domain == null) {
+            return null;
+        } else {
             domain = domain.split(":")[0];
             if(RegexUtil.isIp(domain)) {
                 return domain;
