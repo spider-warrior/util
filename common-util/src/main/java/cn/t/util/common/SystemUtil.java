@@ -3,17 +3,10 @@ package cn.t.util.common;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.*;
-import java.util.Deque;
 import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.Optional;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class SystemUtil {
-
-    private static final String LOCAL_PRIVATE_IP_4 =  getLocalIpV4(true);
 
     public static String getApplicationVar(String key) {
         return Optional.ofNullable(SystemUtil.getSysProperty(key)).orElseGet(() -> SystemUtil.getSysEnv(key));
@@ -41,9 +34,6 @@ public class SystemUtil {
         return getLocalIpBytes(Inet4Address.class, isPrivate);
     }
 
-    public static String getCashedLocalPrivateIpV4() {
-        return LOCAL_PRIVATE_IP_4;
-    }
 
     private static NetworkInterface defaultNetworkInterface() {
         try(DatagramSocket datagramSocket = new DatagramSocket()) {
@@ -63,7 +53,6 @@ public class SystemUtil {
     private static byte[] getLocalIpBytes(Class<? extends InetAddress> clazz, boolean isPrivate) {
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-            Deque<InetAddress> networkInterfaceStack = new LinkedList<>();
             while (interfaces.hasMoreElements()) {
                 NetworkInterface ni = interfaces.nextElement();
                 if(ni.isLoopback() || !ni.isUp()) {
@@ -75,16 +64,11 @@ public class SystemUtil {
                     if ((isPrivate == inetAddress.isSiteLocalAddress())
                         && clazz.isAssignableFrom(inetAddress.getClass())
                     ) {
-                        networkInterfaceStack.push(inetAddress);
+                        return inetAddress.getAddress();
                     }
                 }
             }
-            InetAddress inetAddress = networkInterfaceStack.peek();
-            if(inetAddress == null) {
-                return null;
-            } else {
-                return inetAddress.getAddress();
-            }
+            return null;
         } catch (SocketException e) {
            throw new RuntimeException(e);
         }
@@ -111,22 +95,6 @@ public class SystemUtil {
         return ipParts0 == 10
             || ipParts0 == 172 && ipParts[1] == 16
             || ipParts0 == 192 && (ipParts[1] & 0xFF) == 168;
-    }
-
-    public static long now() {
-        return SystemClock.now;
-    }
-
-    private static final class SystemClock {
-        private static volatile long now = System.currentTimeMillis();
-        static {
-            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
-                Thread thread = new Thread(runnable, "system-clock-optimize");
-                thread.setDaemon(true);
-                return thread;
-            });
-            scheduler.scheduleAtFixedRate(() -> now = System.currentTimeMillis(), 5, 5, TimeUnit.MILLISECONDS);
-        }
     }
 
 }

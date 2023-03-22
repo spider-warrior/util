@@ -9,14 +9,12 @@ import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.concurrent.CountDownLatch;
 
 public class SystemUtilTest {
 
     @Test
     public void getApplicationVarTest() {
         String key = "java.runtime.name";
-//        String key = "abc";
         System.out.println(SystemUtil.getApplicationVar(key));
     }
 
@@ -31,18 +29,9 @@ public class SystemUtilTest {
         System.out.println("private: " + SystemUtil.getLocalIpV4(true));
         System.out.println("public: " + Arrays.toString(SystemUtil.getLocalIpV4Bytes(false)));
         System.out.println("private: " + Arrays.toString(SystemUtil.getLocalIpV4Bytes(true)));
-        System.out.println("private: " + SystemUtil.getCashedLocalPrivateIpV4());
         System.out.println(StandardCharsets.UTF_8.name());
     }
 
-//    @Test
-//    public void getLocalIpv6Test() {
-//        System.out.println("public: " + SystemUtil.getLocalIpV6(false));
-//        System.out.println("private: " + SystemUtil.getLocalIpV6(true));
-//        System.out.println("public: " + Arrays.toString(SystemUtil.getLocalIpV6Bytes(false)));
-//        System.out.println("private: " + Arrays.toString(SystemUtil.getLocalIpV6Bytes(true)));
-//        System.out.println("private: " + SystemUtil.getCashedLocalPrivateIpV6());
-//    }
 
     @Test
     public void printAllAddress() throws SocketException {
@@ -55,49 +44,5 @@ public class SystemUtilTest {
                 System.out.println(inetAddress);
             }
         }
-    }
-
-    @Test
-    public void nowSerialTest() {
-        long startTime = System.currentTimeMillis();
-        for(int i=0; i<100000000; i++) {
-            System.currentTimeMillis();
-        }
-        System.out.println(String.format("%d mills", (System.currentTimeMillis() - startTime)));
-        startTime = System.currentTimeMillis();
-        for(int i=0; i<100000000; i++) {
-            SystemUtil.now();
-        }
-        System.out.println(String.format("%d mills", (System.currentTimeMillis() - startTime)));
-    }
-
-    @Test
-    public void nowParallelTest() throws Exception {
-        int parallelCount = 10;
-        final CountDownLatch countDownLatch1 = new CountDownLatch(parallelCount);
-        long startTime = System.currentTimeMillis();
-        for(int i=0; i<20; i++) {
-            new Thread(() -> {
-                for(int j = 0; j <100000000; j++) {
-                    System.currentTimeMillis();
-                }
-                countDownLatch1.countDown();
-            }).start();
-        }
-        countDownLatch1.await();
-        System.out.println(String.format("%d mills", (System.currentTimeMillis() - startTime)));
-
-        CountDownLatch countDownLatch2 = new CountDownLatch(parallelCount);
-        startTime = System.currentTimeMillis();
-        for(int i=0; i<20; i++) {
-            new Thread(() -> {
-                for(int j = 0; j <100000000; j++) {
-                    SystemUtil.now();
-                }
-                countDownLatch2.countDown();
-            }).start();
-        }
-        countDownLatch2.await();
-        System.out.println(String.format("%d mills", (System.currentTimeMillis() - startTime)));
     }
 }
