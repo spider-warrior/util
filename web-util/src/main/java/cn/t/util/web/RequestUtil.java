@@ -88,8 +88,8 @@ public class RequestUtil {
         response.addCookie(cookie);
     }
 
-    public static String extractTopDomain(HttpServletRequest request) {
-        return extractTopDomain(request.getRequestURL().toString().toLowerCase());
+    public static String extractDomain(HttpServletRequest request) {
+        return extractDomain(request.getRequestURL().toString().toLowerCase());
     }
 
     public static String extractDomain(String url) {
@@ -99,6 +99,10 @@ public class RequestUtil {
         } else {
             return null;
         }
+    }
+
+    public static String extractTopDomain(HttpServletRequest request) {
+        return extractTopDomain(request.getRequestURL().toString().toLowerCase());
     }
 
     public static String extractTopDomain(String url) {
