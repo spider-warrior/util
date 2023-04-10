@@ -464,6 +464,11 @@ public class FileUtil {
     }
 
     public static boolean deleteFile(File file) {
+        if(file == null) {
+            return false;
+        } else if(!file.exists()) {
+            return false;
+        }
         if(file.isDirectory()) {
             File[] subFiles = file.listFiles();
             if (subFiles != null && subFiles.length > 0) {
