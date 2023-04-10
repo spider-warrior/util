@@ -462,4 +462,19 @@ public class FileUtil {
         }
         return fileName.substring(dotIndex + 1);
     }
+
+    public static boolean deleteFile(File file) {
+        if(file.isDirectory()) {
+            File[] subFiles = file.listFiles();
+            if (subFiles != null && subFiles.length > 0) {
+                for (File subFile : subFiles) {
+                    boolean success = deleteFile(subFile);
+                    if(!success) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return file.delete();
+    }
 }
