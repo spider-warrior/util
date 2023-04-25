@@ -68,14 +68,19 @@ public class DateUtilTest {
 
         dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ssZ");
         System.out.println(LocalDateTime.parse("2022-03-22 14:45:55+0800", dateTimeFormatter));
-
-
-//        System.out.println(DateUtil.getBeginTimestampOfYesterday());
-//        System.out.println(DateUtil.getBeginTimestampOfToday());
     }
 
     @Test
     public void convertToZonedDateTimeStringTest() {
         System.out.println(DateUtil.convertToZonedDateTimeString(new Date()));
+    }
+
+    @Test
+    public void getBeginTimestampOfTodayTest() {
+        System.out.println(DateUtil.getBeginTimestampOfToday());
+    }
+    @Test
+    public void getBeginTimestampOfYesterdayTest() {
+        System.out.println(DateUtil.getBeginTimestampOfYesterday());
     }
 }

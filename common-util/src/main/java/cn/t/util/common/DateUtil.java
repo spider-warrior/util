@@ -79,11 +79,11 @@ public class DateUtil {
     }
 
     public static long getBeginTimestampOfToday() {
-        return Timestamp.from(getBeginDateTimeOfToday().atOffset(ZoneOffset.UTC).toInstant()).getTime();
+        return Timestamp.from(getBeginDateTimeOfToday().atZone(ZoneId.systemDefault()).toInstant()).getTime();
     }
 
     public static long getBeginTimestampOfYesterday() {
-        return Timestamp.from(getBeginDateTimeOfYesterday().atOffset(ZoneOffset.UTC).toInstant()).getTime();
+        return Timestamp.from(getBeginDateTimeOfYesterday().atZone(ZoneId.systemDefault()).toInstant()).getTime();
     }
 
     public static LocalDateTime getBeginDateTimeOfToday(ZoneId zoneId) {
