@@ -9,7 +9,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class DateUtilTest {
 
@@ -79,8 +81,16 @@ public class DateUtilTest {
     public void getBeginTimestampOfTodayTest() {
         System.out.println(DateUtil.getBeginTimestampOfToday());
     }
+
     @Test
     public void getBeginTimestampOfYesterdayTest() {
         System.out.println(DateUtil.getBeginTimestampOfYesterday());
     }
+
+    @Test
+    public void addDateTest() {
+        LocalDateTime time = LocalDateTime.now();
+        System.out.println(time.plus(45, ChronoUnit.DAYS));
+    }
+
 }

@@ -3,6 +3,7 @@ package cn.t.util.common.test;
 import cn.t.util.common.RegexUtil;
 import org.junit.Test;
 
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -79,6 +80,17 @@ public class RegexUtilTest {
         if(str2Matched) {
             System.out.println(matcher.group());
         }
+    }
+
+    @Test
+    public void lTrimTest() {
+//        String str = "\n  123456  ";
+        String str = "123456  ";
+        System.out.println(str);
+        System.out.println("--------------------------------------------");
+        System.out.println(str.replaceAll("^\\s+", ""));
+        System.out.println("--------------------------------------------");
+        System.out.println(TimeUnit.NANOSECONDS.toMillis(3000000000L));
     }
 
 

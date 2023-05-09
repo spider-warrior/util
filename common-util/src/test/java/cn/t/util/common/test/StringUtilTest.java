@@ -4,6 +4,8 @@ import cn.t.util.common.StringUtil;
 import cn.t.util.common.digital.HexUtil;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 public class StringUtilTest {
 
     @Test
@@ -74,6 +76,17 @@ public class StringUtilTest {
         System.out.println(StringUtil.snakeToCamel("employee_role_menu_source_relationship", false));
         System.out.println(StringUtil.snakeToCamel("employee_role_relationship", false));
         System.out.println(StringUtil.snakeToCamel("employee_uri_source", false));
+    }
 
+    @Test
+    public void splitTest() {
+//        String str = "249.0.0.0       254.255.255.255 IANA保留地址  CZ88.NET";
+        String str = "1.255.37.0      1.255.255.255   韩国 SK Broadband数据中心";
+        String[] elements = str.split("\\s+");
+        System.out.println("length: " + elements.length);
+        System.out.println(Arrays.toString(elements));
+        for (int i = 0; i < elements.length; i++) {
+            System.out.println(elements[i]);
+        }
     }
 }

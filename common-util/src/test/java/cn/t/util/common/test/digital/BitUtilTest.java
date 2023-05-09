@@ -25,5 +25,11 @@ public class BitUtilTest {
         byte bb = BitUtil.toByte(signedBits);
         System.out.println("byte: " + bb);
     }
+
+    @Test
+    public void numberOutputTest() {
+        System.out.println((int)'\0');
+        System.out.println((byte)150);
+    }
 }
 
