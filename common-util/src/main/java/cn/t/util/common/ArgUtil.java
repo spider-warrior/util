@@ -10,12 +10,7 @@ public class ArgUtil {
         if(ArrayUtil.isEmpty(argArr)) {
             return Collections.emptyMap();
         } else {
-            Map<String, String> mapping = new HashMap<>();
-            for(String entry: argArr) {
-                String[] kv = entry.split("=");
-                mapping.put(kv[0], kv.length == 1 ? "" : kv[1]);
-            }
-            return mapping;
+            return getArgMap(argArr);
         }
     }
 
@@ -38,8 +33,12 @@ public class ArgUtil {
             return Collections.emptyMap();
         }
         String[] entries = args.split(" ");
+        return getArgMap(entries);
+    }
+
+    private static Map<String, String> getArgMap(String[] argArr) {
         Map<String, String> mapping = new HashMap<>();
-        for(String entry: entries) {
+        for(String entry: argArr) {
             String[] kv = entry.split("=");
             mapping.put(kv[0], kv.length == 1 ? "" : kv[1]);
         }

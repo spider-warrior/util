@@ -1,7 +1,5 @@
 package cn.t.util.common.reflect;
 
-import cn.t.util.common.Assert;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -79,10 +77,6 @@ public class ClassUtil {
             Error.class, StackTraceElement.class, StackTraceElement[].class);
     }
 
-
-    /**
-     * Register the given common classes with the ClassUtils cache.
-     */
     private static void registerCommonClasses(Class<?>... commonClasses) {
         for (Class<?> clazz : commonClasses) {
             commonClassCache.put(clazz.getName(), clazz);
@@ -90,8 +84,6 @@ public class ClassUtil {
     }
 
     public static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
-        Assert.notNull(clazz, "Class must not be null");
-        Assert.notNull(name, "Method name must not be null");
         Class<?> searchType = clazz;
         while (searchType != null) {
             Method[] methods = (searchType.isInterface() ? searchType.getMethods() : getDeclaredMethods(searchType));
@@ -107,7 +99,6 @@ public class ClassUtil {
     }
 
     private static Method[] getDeclaredMethods(Class<?> clazz) {
-        Assert.notNull(clazz, "Class must not be null");
         Method[] result = declaredMethodsCache.get(clazz);
         if (result == null) {
             Method[] declaredMethods = clazz.getDeclaredMethods();
@@ -165,6 +156,4 @@ public class ClassUtil {
     public static boolean isFinal(int modifiers) {
         return Modifier.isFinal(modifiers);
     }
-
-
 }
