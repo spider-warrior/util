@@ -8,11 +8,9 @@ public class HttpResponseEntity {
 
     private int code;
 
-    private String contentType;
-
     private Header[] headers;
 
-    private Object content;
+    private byte[] content;
 
     private String url;
 
@@ -24,14 +22,6 @@ public class HttpResponseEntity {
         this.code = code;
     }
 
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
     public Header[] getHeaders() {
         return headers;
     }
@@ -40,11 +30,11 @@ public class HttpResponseEntity {
         this.headers = headers;
     }
 
-    public Object getContent() {
+    public byte[] getContent() {
         return content;
     }
 
-    public void setContent(Object content) {
+    public void setContent(byte[] content) {
         this.content = content;
     }
 
@@ -56,13 +46,24 @@ public class HttpResponseEntity {
         this.url = url;
     }
 
+    public Header getHeader(final String name) {
+        if(headers == null || headers.length == 0) {
+            return null;
+        }
+        for (Header header : headers) {
+            if (header.getName().equalsIgnoreCase(name)) {
+                return header;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return "HttpResponseEntity{" +
             "code=" + code +
-            ", contentType='" + contentType + '\'' +
             ", headers=" + Arrays.toString(headers) +
-            ", content=" + content +
+            ", content=" + Arrays.toString(content) +
             ", url='" + url + '\'' +
             '}';
     }

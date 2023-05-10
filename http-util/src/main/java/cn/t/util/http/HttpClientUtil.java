@@ -430,20 +430,9 @@ public class HttpClientUtil {
         StatusLine statusLine = response.getStatusLine();
         HttpEntity entity = response.getEntity();
         responseEntity.setCode(statusLine.getStatusCode());
-        Header contentTypeHeader = response.getFirstHeader(HttpHeaders.CONTENT_TYPE);
-        ContentType ct = null;
-        if (contentTypeHeader != null) {
-            responseEntity.setContentType(contentTypeHeader.getValue());
-            ct = ContentType.parse(contentTypeHeader.getValue());
-        }
         responseEntity.setHeaders(response.getAllHeaders());
         if (entity != null) {
-            if (isStringContent(ct)) {
-                Charset charset = ct.getCharset() != null ? ct.getCharset() : Charset.defaultCharset();
-                responseEntity.setContent(EntityUtils.toString(entity, charset));
-            } else {
-                responseEntity.setContent(EntityUtils.toByteArray(entity));
-            }
+            responseEntity.setContent(EntityUtils.toByteArray(entity));
         }
         HttpUriRequest currentRequest = (HttpUriRequest) context.getAttribute(HttpCoreContext.HTTP_REQUEST);
         if(currentRequest.getURI().isAbsolute()) {
@@ -475,10 +464,6 @@ public class HttpClientUtil {
             param.forEach((k, v) -> builder.append("&").append(k).append("=").append(v));
         }
         return builder.deleteCharAt(0).toString();
-    }
-
-    private static boolean isStringContent(ContentType ct) {
-        return ct != null && STRING_CONTENT_LIST.parallelStream().anyMatch(t -> t.getMimeType().equalsIgnoreCase(ct.getMimeType()));
     }
 
     private static SocketConfig createSocketConfig() {
@@ -564,19 +549,4 @@ public class HttpClientUtil {
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
             .build();
     }
-
-    private static final List<ContentType> STRING_CONTENT_LIST = new ArrayList<>();
-
-    static {
-        STRING_CONTENT_LIST.add(ContentType.APPLICATION_ATOM_XML);
-        STRING_CONTENT_LIST.add(ContentType.APPLICATION_FORM_URLENCODED);
-        STRING_CONTENT_LIST.add(ContentType.APPLICATION_JSON);
-        STRING_CONTENT_LIST.add(ContentType.APPLICATION_SVG_XML);
-        STRING_CONTENT_LIST.add(ContentType.APPLICATION_XHTML_XML);
-        STRING_CONTENT_LIST.add(ContentType.APPLICATION_XML);
-        STRING_CONTENT_LIST.add(ContentType.TEXT_HTML);
-        STRING_CONTENT_LIST.add(ContentType.TEXT_PLAIN);
-        STRING_CONTENT_LIST.add(ContentType.TEXT_XML);
-    }
-
 }

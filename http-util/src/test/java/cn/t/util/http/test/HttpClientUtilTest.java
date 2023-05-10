@@ -1,6 +1,8 @@
 package cn.t.util.http.test;
 
 import cn.t.util.http.*;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,10 +12,9 @@ import javax.net.ssl.TrustManagerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 
 public class HttpClientUtilTest {
 
@@ -28,7 +29,7 @@ public class HttpClientUtilTest {
         params.put("name", "amen");
         HttpResponseEntity responseEntity = HttpClientUtil.get(url, headers, params);
         logger.info("status: {}", responseEntity.getCode());
-        logger.info("content type: {}", responseEntity.getContentType());
+        logger.info("content type: {}", responseEntity.getHeader(HttpHeaders.CONTENT_TYPE));
         logger.info("content: {}", responseEntity.getContent());
     }
 
@@ -41,7 +42,7 @@ public class HttpClientUtilTest {
         params.put("name", "amen");
         HttpResponseEntity responseEntity = HttpClientUtil.post(url, headers, params, ParamFormat.URL_FORM_ENCODE);
         logger.info("status: {}", responseEntity.getCode());
-        logger.info("content type: {}", responseEntity.getContentType());
+        logger.info("content type: {}", responseEntity.getHeader(HttpHeaders.CONTENT_TYPE));
         logger.info("content: {}", responseEntity.getContent());
 
         logger.info("-------------------------------------------------------------------");
@@ -49,7 +50,7 @@ public class HttpClientUtilTest {
         url = "http://127.0.0.1:8080/test/json_post";
         responseEntity = HttpClientUtil.post(url, headers, params, ParamFormat.APPLICATION_JSON);
         logger.info("status: {}", responseEntity.getCode());
-        logger.info("content type: {}", responseEntity.getContentType());
+        logger.info("content type: {}", responseEntity.getHeader(HttpHeaders.CONTENT_TYPE));
         logger.info("content: {}", responseEntity.getContent());
     }
 
@@ -115,7 +116,7 @@ public class HttpClientUtilTest {
         HttpResponseEntity responseEntity = HttpClientUtil.get(url);
         System.out.println(responseEntity);
         logger.info("status: {}", responseEntity.getCode());
-        logger.info("content type: {}", responseEntity.getContentType());
+        logger.info("content type: {}", responseEntity.getHeader(HttpHeaders.CONTENT_TYPE));
         logger.info("content: {}", responseEntity.getContent());
     }
 
@@ -155,6 +156,63 @@ public class HttpClientUtilTest {
         logger.info("status: {}", responseEntity.getCode());
         logger.info("headers: {}", Arrays.toString(responseEntity.getHeaders()));
         logger.info("content: {}", responseEntity.getContent());
+    }
+    
+    @Test
+    public void juHeIpQueryTest() throws Exception {
+        String url = "https://apis.juhe.cn/ip/Example/query.php";
+        Map<String, Object> params = new HashMap<>();
+        for (int i = 0; i < 200; i++) {
+            params.put("IP", "123.113.187." + i);
+            HttpResponseEntity responseEntity = HttpClientUtil.post(url, params, ParamFormat.URL_FORM_ENCODE);
+            System.out.println(responseEntity);
+            System.out.println("=====================================================");
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(3));
+        }
+    }
+
+    @Test
+    public void aiWenIpQueryTest() throws Exception {
+        String searchString = "地址：";
+        String url = "https://www.chaipip.com/aiwen.html";
+        Map<String, Object> params = new HashMap<>();
+        params.put("geetest_challenge", "869d2a864f7b0ebab2291c9aaa2325da");
+        params.put("geetest_seccode", "869d2a864f7b0ebab2291c9aaa2325da|jordan");
+        params.put("cnm", "RmloQVVEaXZqY3d2RmVzTmpFMk5UTTJOVFV5T0E9PUFUdFB1c3hQc0ZEjQCUr");
+        for (int i = 0; i < 200; i++) {
+            params.put("ip", "111.225.128." + i);
+            HttpResponseEntity responseEntity = HttpClientUtil.post(url, params, ParamFormat.URL_FORM_ENCODE);
+            String body = Objects.toString(responseEntity.getContent());
+            int ip2regionIndex = body.indexOf("IP2Region");
+            int startIndex = body.indexOf(searchString, ip2regionIndex);
+            startIndex = startIndex + searchString.length();
+            int endIndex = body.indexOf("<", startIndex);
+            String ip2region = body.substring(startIndex, endIndex).trim();
+            System.out.println(ip2region);
+            System.out.println("=====================================================");
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(1));
+        }
+    }
+
+    @Test
+    public void ip138QueryTest() throws Exception {
+        String charsetIdentityString = "<meta charset=\"";
+        String format = "https://ip138.com/iplookup.asp?ip=27.23.180.%d&action=2";
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Referer", "https://ip138.com/iplookup.asp?ip=27.22.79.214&action=2");
+        headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36");
+        HttpClientUtilCustomizer.proxy = new HttpHost("127.0.0.1", 8888);
+        for (int i = 0; i < 200; i++) {
+            HttpResponseEntity responseEntity = HttpClientUtil.sslGetWithoutCertificateCheck("https://ip138.com/iplookup.asp?ip=27.23.180.0&action=2", headers, Collections.emptyMap());
+            String html = Objects.toString(responseEntity.getContent());
+            int startIndex = html.indexOf(charsetIdentityString);
+            startIndex = startIndex + charsetIdentityString.length();
+            int endIndex = html.indexOf("\"", startIndex);
+            String charset = html.substring(startIndex, endIndex);
+            html = new String(html.getBytes(), charset);
+            System.out.println("=====================================================");
+            LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(2));
+        }
     }
 
 }
