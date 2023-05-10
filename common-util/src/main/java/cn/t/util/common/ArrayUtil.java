@@ -88,7 +88,7 @@ public class ArrayUtil {
         }
     }
 
-    private static int binarySearch(byte[] source, int sourceOffset, int sourceCount,
+    public static int binarySearch(byte[] source, int sourceOffset, int sourceCount,
                                     byte[] target, int targetOffset, int targetCount,
                                     int fromIndex) {
         if (fromIndex >= sourceCount) {

@@ -1,8 +1,8 @@
 package cn.t.util.http.test;
 
+import cn.t.util.common.ArrayUtil;
 import cn.t.util.http.*;
 import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,20 +196,32 @@ public class HttpClientUtilTest {
 
     @Test
     public void ip138QueryTest() throws Exception {
-        String charsetIdentityString = "<meta charset=\"";
-        String format = "https://ip138.com/iplookup.asp?ip=27.23.180.%d&action=2";
+        byte[] charsetIdentityStartBytes = "<meta charset=\"".getBytes();
+        byte[] charsetIdentityEndBytes = "\"".getBytes();
+        String ipFormat = "27.23.180.%d";
+        String url = "https://ip138.com/iplookup.asp?action=2&ip=";
         Map<String, String> headers = new HashMap<>();
         headers.put("Referer", "https://ip138.com/iplookup.asp?ip=27.22.79.214&action=2");
         headers.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36");
-        HttpClientUtilCustomizer.proxy = new HttpHost("127.0.0.1", 8888);
+        String ipResultIdentityStringStart = "var ip_result =";
+        String ipResultIdentityStringEnd = ";";
+
         for (int i = 0; i < 200; i++) {
-            HttpResponseEntity responseEntity = HttpClientUtil.sslGetWithoutCertificateCheck("https://ip138.com/iplookup.asp?ip=27.23.180.0&action=2", headers, Collections.emptyMap());
-            String html = Objects.toString(responseEntity.getContent());
-            int startIndex = html.indexOf(charsetIdentityString);
-            startIndex = startIndex + charsetIdentityString.length();
-            int endIndex = html.indexOf("\"", startIndex);
-            String charset = html.substring(startIndex, endIndex);
-            html = new String(html.getBytes(), charset);
+            String ip = String.format(ipFormat, i);
+            HttpResponseEntity responseEntity = HttpClientUtil.sslGetWithoutCertificateCheck(url + ip, headers, Collections.emptyMap());
+            byte[] content = responseEntity.getContent();
+            int startIndex = ArrayUtil.binarySearch(content, charsetIdentityStartBytes);
+            startIndex = startIndex + charsetIdentityStartBytes.length;
+            int endIndex = ArrayUtil.binarySearch(content, 0, content.length, charsetIdentityEndBytes, 0, charsetIdentityEndBytes.length, startIndex);
+            byte[] charsetBytes = Arrays.copyOfRange(content, startIndex, endIndex);
+            String charset = new String(charsetBytes);
+            String html = new String(content, charset);
+
+            int resultStartIndex = html.indexOf(ipResultIdentityStringStart);
+            resultStartIndex = resultStartIndex + ipResultIdentityStringStart.length();
+            int resultEndIndex = html.indexOf(ipResultIdentityStringEnd, resultStartIndex);
+            String resultJson = html.substring(resultStartIndex, resultEndIndex).trim();
+            System.out.printf("ip: %s, detail: %s%n", ip, resultJson);
             System.out.println("=====================================================");
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(2));
         }
