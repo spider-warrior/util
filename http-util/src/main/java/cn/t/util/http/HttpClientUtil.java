@@ -90,6 +90,10 @@ public class HttpClientUtil {
         return executeGet(client, uri, headers, params, encode);
     }
 
+    public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri) throws IOException {
+        return sslGetWithoutCertificateCheck(uri, null);
+    }
+
     public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri, Map<String, ?> params) throws IOException {
         return sslGetWithoutCertificateCheck(uri, null, params, false);
     }

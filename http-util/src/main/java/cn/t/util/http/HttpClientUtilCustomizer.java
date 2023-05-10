@@ -20,8 +20,9 @@ import org.apache.http.impl.io.DefaultHttpResponseParserFactory;
 import javax.net.ssl.HostnameVerifier;
 
 public class HttpClientUtilCustomizer {
+    public static HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.getDefaultHostnameVerifier();
     public static PlainConnectionSocketFactory plainConnectionSocketFactory = PlainConnectionSocketFactory.INSTANCE;
-    public static SSLConnectionSocketFactory sslConnectionSocketFactory = SSLConnectionSocketFactory.getSystemSocketFactory();
+    public static SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory((javax.net.ssl.SSLSocketFactory) javax.net.ssl.SSLSocketFactory.getDefault(), hostnameVerifier);
     public static DefaultHttpRequestWriterFactory defaultHttpRequestWriterFactory = DefaultHttpRequestWriterFactory.INSTANCE;
     public static DefaultHttpResponseParserFactory defaultHttpResponseParserFactory = DefaultHttpResponseParserFactory.INSTANCE;
     public static ManagedHttpClientConnectionFactory defaultHttpConnectionFactory = new ManagedHttpClientConnectionFactory(defaultHttpRequestWriterFactory, defaultHttpResponseParserFactory);
@@ -29,7 +30,6 @@ public class HttpClientUtilCustomizer {
     public static ConnectionReuseStrategy connectionReuseStrategy = DefaultConnectionReuseStrategy.INSTANCE;
     public static ConnectionKeepAliveStrategy connectionKeepAliveStrategy = DefaultConnectionKeepAliveStrategy.INSTANCE;
     public static HttpRequestRetryHandler httpRequestRetryHandler = new DefaultHttpRequestRetryHandler(0, false);
-    public static HostnameVerifier hostnameVerifier = new DefaultHostnameVerifier();
     public static boolean tcpNoDelay = true;
     public static int soTimeout = 10000;
     public static int connectTimeout = 3000;
