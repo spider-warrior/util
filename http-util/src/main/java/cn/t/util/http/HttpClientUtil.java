@@ -71,11 +71,11 @@ public class HttpClientUtil {
     private static final CloseableHttpClient defaultHttpClientWithoutSslCertificateCheck = createDefaultHttpClientWithoutSslCertificateCheckClient();
 
     public static HttpResponseEntity get(String uri) throws IOException {
-        return get(uri, null, null, false);
+        return get(uri, null);
     }
 
     public static HttpResponseEntity get(String uri, Map<String, ?> params) throws IOException {
-        return get(uri, null, params, false);
+        return get(uri, null, params);
     }
 
     public static HttpResponseEntity get(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
@@ -83,7 +83,7 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity get(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
-        return executeGet(defaultHttpClient, uri, headers, params, encode);
+        return get(defaultHttpClient, uri, headers, params, encode);
     }
 
     public static HttpResponseEntity get(CloseableHttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
@@ -95,11 +95,15 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri, Map<String, ?> params) throws IOException {
-        return sslGetWithoutCertificateCheck(uri, null, params, false);
+        return sslGetWithoutCertificateCheck(uri, null, params);
     }
 
     public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
         return sslGetWithoutCertificateCheck(uri, headers, params, false);
+    }
+
+    public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
+        return executeGet(defaultHttpClientWithoutSslCertificateCheck, uri, headers, params, encode);
     }
 
     public static HttpResponseEntity sslGetWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, ?> params, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
@@ -107,7 +111,7 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity sslGetWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, ?> params, boolean encode, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
-        return executeGet(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, null, params, encode);
+        return sslGetWithKeyManagerFactoryAndTrustManagerFactory(uri, null, params, encode, keyManagerFactory, trustManagerFactory);
     }
 
     public static HttpResponseEntity sslGetWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, String> headers, Map<String, ?> params, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
@@ -117,11 +121,6 @@ public class HttpClientUtil {
     public static HttpResponseEntity sslGetWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
         return executeGet(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, params, encode);
     }
-
-    public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
-        return executeGet(defaultHttpClientWithoutSslCertificateCheck, uri, headers, params, encode);
-    }
-
 
     private static HttpResponseEntity executeGet(CloseableHttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
         if (!CollectionUtil.isEmpty(params)) {
@@ -137,7 +136,7 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity delete(String uri, Map<String, ?> params) throws IOException {
-        return delete(uri, null, params, false);
+        return delete(uri, null, params);
     }
 
     public static HttpResponseEntity delete(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
@@ -145,7 +144,7 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity delete(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
-        return executeDelete(defaultHttpClient, uri, headers, params, encode);
+        return delete(defaultHttpClient, uri, headers, params, encode);
     }
 
     public static HttpResponseEntity delete(CloseableHttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
@@ -153,11 +152,15 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity sslDeleteWithoutCertificateCheck(String uri, Map<String, ?> params) throws IOException {
-        return sslDeleteWithoutCertificateCheck(uri, null, params, false);
+        return sslDeleteWithoutCertificateCheck(uri, null, params);
     }
 
     public static HttpResponseEntity sslDeleteWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
         return sslDeleteWithoutCertificateCheck(uri, headers, params, false);
+    }
+
+    public static HttpResponseEntity sslDeleteWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
+        return executeDelete(defaultHttpClientWithoutSslCertificateCheck, uri, headers, params, encode);
     }
 
     public static HttpResponseEntity sslDeleteWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, ?> params, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
@@ -176,10 +179,6 @@ public class HttpClientUtil {
         return executeDelete(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, params, encode);
     }
 
-    public static HttpResponseEntity sslDeleteWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
-        return executeDelete(defaultHttpClientWithoutSslCertificateCheck, uri, headers, params, encode);
-    }
-
     private static HttpResponseEntity executeDelete(CloseableHttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
         if (!CollectionUtil.isEmpty(params)) {
             uri += (uri.contains("?") ? encodeToParamString(params, encode) : "?" + encodeToParamString(params, encode));
@@ -191,7 +190,7 @@ public class HttpClientUtil {
 
 
     public static HttpResponseEntity post(String uri, Map<String, ?> params) throws IOException {
-        return post(uri, params, ParamFormat.URL_FORM_ENCODE);
+        return post(uri, null, params);
     }
 
     public static HttpResponseEntity post(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
@@ -202,8 +201,24 @@ public class HttpClientUtil {
         return post(uri, null, params, paramFormat);
     }
 
+    public static HttpResponseEntity post(String uri, String body) throws IOException {
+        return post(uri, null, body);
+    }
+
+    public static HttpResponseEntity post(String uri, Map<String, String> headers, String body) throws IOException {
+        return post(uri, headers, body, ParamFormat.URL_FORM_ENCODE);
+    }
+
+    public static HttpResponseEntity post(String uri, String body, ParamFormat paramFormat) throws IOException {
+        return post(uri, null, body, paramFormat);
+    }
+
+    public static HttpResponseEntity post(String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
+        return executePost(defaultHttpClient, uri, headers, body, paramFormat);
+    }
+
     public static HttpResponseEntity post(String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
-        return executePost(defaultHttpClient, uri, headers, params, paramFormat);
+        return post(defaultHttpClient, uri, headers, params, paramFormat);
     }
 
     public static HttpResponseEntity post(CloseableHttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
@@ -224,22 +239,6 @@ public class HttpClientUtil {
 
     public static HttpResponseEntity sslPostWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
         return executePost(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, params, paramFormat);
-    }
-
-    public static HttpResponseEntity post(String uri, String body) throws IOException {
-        return post(uri, body, ParamFormat.URL_FORM_ENCODE);
-    }
-
-    public static HttpResponseEntity post(String uri, Map<String, String> headers, String body) throws IOException {
-        return post(uri, headers, body, ParamFormat.URL_FORM_ENCODE);
-    }
-
-    public static HttpResponseEntity post(String uri, String body, ParamFormat paramFormat) throws IOException {
-        return post(uri, null, body, paramFormat);
-    }
-
-    public static HttpResponseEntity post(String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
-        return executePost(defaultHttpClient, uri, headers, body, paramFormat);
     }
 
     public static HttpResponseEntity sslPostWithoutCertificateCheck(String uri, String body, ParamFormat paramFormat) throws IOException {
@@ -273,7 +272,7 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity put(String uri, Map<String, ?> params) throws IOException {
-        return put(uri, null, params, ParamFormat.URL_FORM_ENCODE);
+        return put(uri, null, params);
     }
 
     public static HttpResponseEntity put(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
@@ -281,11 +280,27 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity put(String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
-        return executePut(defaultHttpClient, uri, headers, params, paramFormat);
+        return put(defaultHttpClient, uri, headers, params, paramFormat);
     }
 
     public static HttpResponseEntity put(CloseableHttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
         return executePut(client, uri, headers, params, paramFormat);
+    }
+
+    public static HttpResponseEntity put(String uri, String body) throws IOException {
+        return put(uri, null, body);
+    }
+
+    public static HttpResponseEntity put(String uri, Map<String, String> headers, String body) throws IOException {
+        return put(uri, headers, body, ParamFormat.URL_FORM_ENCODE);
+    }
+
+    public static HttpResponseEntity put(String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
+        return put(defaultHttpClient, uri, headers, body, paramFormat);
+    }
+
+    public static HttpResponseEntity put(CloseableHttpClient client, String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
+        return executePut(client, uri, headers, body, paramFormat);
     }
 
     public static HttpResponseEntity sslPutWithoutCertificateCheck(String uri, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
@@ -297,7 +312,7 @@ public class HttpClientUtil {
     }
 
     public static HttpResponseEntity sslPutWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, ?> params, ParamFormat paramFormat, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
-        return executePut(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, null, params, paramFormat);
+        return sslPutWithKeyManagerFactoryAndTrustManagerFactory(uri, null, params, paramFormat, keyManagerFactory, trustManagerFactory);
     }
 
     public static HttpResponseEntity sslPutWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
@@ -309,22 +324,6 @@ public class HttpClientUtil {
         setHeaders(httpPut, headers);
         setParams(httpPut, paramFormat, params);
         return executeRequest(httpClient, httpPut);
-    }
-
-    public static HttpResponseEntity put(String uri, String body) throws IOException {
-        return put(uri, null, body, ParamFormat.URL_FORM_ENCODE);
-    }
-
-    public static HttpResponseEntity put(String uri, Map<String, String> headers, String body) throws IOException {
-        return put(uri, headers, body, ParamFormat.URL_FORM_ENCODE);
-    }
-
-    public static HttpResponseEntity put(String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
-        return executePut(defaultHttpClient, uri, headers, body, paramFormat);
-    }
-
-    public static HttpResponseEntity put(CloseableHttpClient client, String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
-        return executePut(client, uri, headers, body, paramFormat);
     }
 
     public static HttpResponseEntity sslPutWithoutCertificateCheck(String uri, String body, ParamFormat paramFormat) throws IOException {
