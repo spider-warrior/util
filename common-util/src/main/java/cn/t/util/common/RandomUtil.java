@@ -13,6 +13,9 @@ public class RandomUtil {
 
     public static int randomInt(int min, int max) {
         int value = ThreadLocalRandom.current().nextInt(max);
+        if(min >= max) {
+            throw new IllegalArgumentException("min is greater than max");
+        }
         //不在范围内
         if (value < min) {
             value = min + (min - value) % (max - min);
