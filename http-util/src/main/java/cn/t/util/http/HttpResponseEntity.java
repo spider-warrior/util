@@ -2,6 +2,7 @@ package cn.t.util.http;
 
 import org.apache.http.Header;
 
+import java.net.URI;
 import java.util.Arrays;
 
 public class HttpResponseEntity {
@@ -12,7 +13,7 @@ public class HttpResponseEntity {
 
     private byte[] content;
 
-    private String url;
+    private URI uri;
 
     public int getCode() {
         return code;
@@ -38,12 +39,12 @@ public class HttpResponseEntity {
         this.content = content;
     }
 
-    public String getUrl() {
-        return url;
+    public URI getUri() {
+        return uri;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUri(URI uri) {
+        this.uri = uri;
     }
 
     public Header getHeader(final String name) {
@@ -64,7 +65,7 @@ public class HttpResponseEntity {
             "code=" + code +
             ", headers=" + Arrays.toString(headers) +
             ", content=" + Arrays.toString(content) +
-            ", url='" + url + '\'' +
+            ", uri=" + uri +
             '}';
     }
 }

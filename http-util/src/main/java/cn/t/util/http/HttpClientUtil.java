@@ -24,7 +24,6 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
@@ -35,6 +34,7 @@ import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -353,6 +353,7 @@ public class HttpClientUtil {
         RequestLine requestLine = request.getRequestLine();
         logger.trace("Executing request: {}", requestLine);
         HttpContext context = new BasicHttpContext();
+        context.setAttribute("_uri", request.getURI());
         try (
             CloseableHttpResponse response = httpClient.execute(request, context)
         ) {
@@ -433,13 +434,7 @@ public class HttpClientUtil {
         if (entity != null) {
             responseEntity.setContent(EntityUtils.toByteArray(entity));
         }
-        HttpUriRequest currentRequest = (HttpUriRequest) context.getAttribute(HttpCoreContext.HTTP_REQUEST);
-        if(currentRequest.getURI().isAbsolute()) {
-            responseEntity.setUrl(currentRequest.getURI().toString());
-        } else {
-            HttpHost currentHost = (HttpHost)  context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
-            responseEntity.setUrl(currentHost.toURI() + currentRequest.getURI());
-        }
+        responseEntity.setUri((URI)context.getAttribute("_uri"));
         EntityUtils.consume(entity);
         return responseEntity;
     }
