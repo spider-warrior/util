@@ -15,11 +15,12 @@ public class RetryUtil {
             try {
                 runnable.run();
                 break;
-            } catch (Exception e) {
+            } catch (Throwable t) {
                 if(++tryTime > tryTimes) {
-                    throw e;
+                    throw t;
                 } else {
-                    logger.warn("[{}]失败, exception: {} , 重试: {}, extraInfo: {}", taskName, e.getClass().getSimpleName(), tryTime, extraInfo);
+                    Throwable causedBy = ExceptionUtil.getCausedBy(t);
+                    logger.warn("[{}]失败, exceptionClass: {}, exceptionMessage: {}, 重试: {}, extraInfo: {}", taskName, causedBy.getClass().getSimpleName(), causedBy.getMessage(), tryTime, extraInfo);
                 }
             }
         }
@@ -30,11 +31,12 @@ public class RetryUtil {
         while (true) {
             try {
                 return callable.call();
-            } catch (Exception e) {
+            } catch (Throwable t) {
                 if(++tryTime > tryTimes) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException(t);
                 } else {
-                    logger.warn("[{}]失败, exception: {} , 重试: {}, extraInfo: {}", taskName, e.getClass().getSimpleName(), tryTime, extraInfo);
+                    Throwable causedBy = ExceptionUtil.getCausedBy(t);
+                    logger.warn("[{}]失败, exceptionClass: {}, exceptionMessage: {}, 重试: {}, extraInfo: {}", taskName, causedBy.getClass().getSimpleName(), causedBy.getMessage(), tryTime, extraInfo);
                 }
             }
         }
