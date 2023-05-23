@@ -5,6 +5,7 @@ import cn.t.util.common.JsonUtil;
 import cn.t.util.common.StringUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.http.*;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -19,7 +20,10 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.*;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.LaxRedirectStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
@@ -67,8 +71,8 @@ public class HttpClientUtil {
     private static final PoolingHttpClientConnectionManager defaultConnectionManager = createConnectionManager();
     private static final PoolingHttpClientConnectionManager defaultConnectionWithoutSslCertificateCheckManager = createNoneSslCertificateCheckConnectionManager();
     private static final RequestConfig defaultRequestConfig = createRequestConfig();
-    private static final CloseableHttpClient defaultHttpClient = createDefaultHttpClient();
-    private static final CloseableHttpClient defaultHttpClientWithoutSslCertificateCheck = createDefaultHttpClientWithoutSslCertificateCheckClient();
+    private static final HttpClient defaultHttpClient = createDefaultHttpClient();
+    private static final HttpClient defaultHttpClientWithoutSslCertificateCheck = createDefaultHttpClientWithoutSslCertificateCheckClient();
 
     public static HttpResponseEntity get(String uri) throws IOException {
         return get(uri, null);
@@ -86,7 +90,7 @@ public class HttpClientUtil {
         return get(defaultHttpClient, uri, headers, params, encode);
     }
 
-    public static HttpResponseEntity get(CloseableHttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
+    public static HttpResponseEntity get(HttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
         return executeGet(client, uri, headers, params, encode);
     }
 
@@ -122,7 +126,7 @@ public class HttpClientUtil {
         return executeGet(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, params, encode);
     }
 
-    private static HttpResponseEntity executeGet(CloseableHttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
+    private static HttpResponseEntity executeGet(HttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
         if (!CollectionUtil.isEmpty(params)) {
             uri += (uri.contains("?") ? "&" + encodeToParamString(params, encode) : "?" + encodeToParamString(params, encode));
         }
@@ -147,7 +151,7 @@ public class HttpClientUtil {
         return delete(defaultHttpClient, uri, headers, params, encode);
     }
 
-    public static HttpResponseEntity delete(CloseableHttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
+    public static HttpResponseEntity delete(HttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
         return executeDelete(client, uri, headers, params, encode);
     }
 
@@ -179,7 +183,7 @@ public class HttpClientUtil {
         return executeDelete(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, params, encode);
     }
 
-    private static HttpResponseEntity executeDelete(CloseableHttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
+    private static HttpResponseEntity executeDelete(HttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
         if (!CollectionUtil.isEmpty(params)) {
             uri += (uri.contains("?") ? encodeToParamString(params, encode) : "?" + encodeToParamString(params, encode));
         }
@@ -221,7 +225,7 @@ public class HttpClientUtil {
         return post(defaultHttpClient, uri, headers, params, paramFormat);
     }
 
-    public static HttpResponseEntity post(CloseableHttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
+    public static HttpResponseEntity post(HttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
         return executePost(client, uri, headers, params, paramFormat);
     }
 
@@ -257,14 +261,14 @@ public class HttpClientUtil {
         return executePost(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, body, paramFormat);
     }
 
-    private static HttpResponseEntity executePost(CloseableHttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
+    private static HttpResponseEntity executePost(HttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
         HttpPost httpPost = new HttpPost(uri);
         setHeaders(httpPost, headers);
         setParams(httpPost, paramFormat, params);
         return executeRequest(httpClient, httpPost);
     }
 
-    private static HttpResponseEntity executePost(CloseableHttpClient httpClient, String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
+    private static HttpResponseEntity executePost(HttpClient httpClient, String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
         HttpPost httpPost = new HttpPost(uri);
         setHeaders(httpPost, headers);
         setBody(httpPost, paramFormat, body);
@@ -283,7 +287,7 @@ public class HttpClientUtil {
         return put(defaultHttpClient, uri, headers, params, paramFormat);
     }
 
-    public static HttpResponseEntity put(CloseableHttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
+    public static HttpResponseEntity put(HttpClient client, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
         return executePut(client, uri, headers, params, paramFormat);
     }
 
@@ -299,7 +303,7 @@ public class HttpClientUtil {
         return put(defaultHttpClient, uri, headers, body, paramFormat);
     }
 
-    public static HttpResponseEntity put(CloseableHttpClient client, String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
+    public static HttpResponseEntity put(HttpClient client, String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
         return executePut(client, uri, headers, body, paramFormat);
     }
 
@@ -319,7 +323,7 @@ public class HttpClientUtil {
         return executePut(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, params, paramFormat);
     }
 
-    private static HttpResponseEntity executePut(CloseableHttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
+    private static HttpResponseEntity executePut(HttpClient httpClient, String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
         HttpPut httpPut = new HttpPut(uri);
         setHeaders(httpPut, headers);
         setParams(httpPut, paramFormat, params);
@@ -342,22 +346,25 @@ public class HttpClientUtil {
         return executePut(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, body, paramFormat);
     }
 
-    private static HttpResponseEntity executePut(CloseableHttpClient httpClient, String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
+    private static HttpResponseEntity executePut(HttpClient httpClient, String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
         HttpPut httpPut = new HttpPut(uri);
         setHeaders(httpPut, headers);
         setBody(httpPut, paramFormat, body);
         return executeRequest(httpClient, httpPut);
     }
 
-    private static HttpResponseEntity executeRequest(CloseableHttpClient httpClient, HttpUriRequest request) throws IOException {
+    private static HttpResponseEntity executeRequest(HttpClient httpClient, HttpUriRequest request) throws IOException {
         RequestLine requestLine = request.getRequestLine();
         logger.trace("Executing request: {}", requestLine);
         HttpContext context = new BasicHttpContext();
         context.setAttribute("_uri", request.getURI());
-        try (
-            CloseableHttpResponse response = httpClient.execute(request, context)
-        ) {
+        HttpResponse response = httpClient.execute(request, context);
+        try {
             return buildHttpResponseEntity(response, context);
+        } finally {
+            if(response instanceof CloseableHttpResponse) {
+                ((CloseableHttpResponse)response).close();
+            }
         }
     }
 
@@ -403,7 +410,7 @@ public class HttpClientUtil {
         }
     }
 
-    private static CloseableHttpClient createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws KeyManagementException {
+    private static HttpClient createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws KeyManagementException {
         SSLContext sslContext = SSLContexts.createDefault();
         KeyManager[] keyManagers = null;
         TrustManager[] trustManagers = null;
@@ -425,7 +432,7 @@ public class HttpClientUtil {
         return builder.build();
     }
 
-    private static HttpResponseEntity buildHttpResponseEntity(CloseableHttpResponse response, HttpContext context) throws IOException {
+    private static HttpResponseEntity buildHttpResponseEntity(HttpResponse response, HttpContext context) throws IOException {
         HttpResponseEntity responseEntity = new HttpResponseEntity();
         StatusLine statusLine = response.getStatusLine();
         HttpEntity entity = response.getEntity();
@@ -519,7 +526,7 @@ public class HttpClientUtil {
             .build();
     }
 
-    private static CloseableHttpClient createDefaultHttpClient() {
+    private static HttpClient createDefaultHttpClient() {
         return HttpClients.custom()
             .setConnectionManager(defaultConnectionManager)
             .setConnectionManagerShared(false)
@@ -531,7 +538,7 @@ public class HttpClientUtil {
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
             .build();
     }
-    private static CloseableHttpClient createDefaultHttpClientWithoutSslCertificateCheckClient() {
+    private static HttpClient createDefaultHttpClientWithoutSslCertificateCheckClient() {
         return HttpClients.custom()
             .setConnectionManager(defaultConnectionWithoutSslCertificateCheckManager)
             .setConnectionManagerShared(false)
