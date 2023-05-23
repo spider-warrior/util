@@ -20,10 +20,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.client.LaxRedirectStrategy;
+import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.BasicHttpContext;
@@ -43,6 +40,8 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,12 +66,24 @@ public class HttpClientUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpClientUtil.class);
 
+    private static final SSLConnectionSocketFactory inSecureSslConnectionSocketFactory;
+    static {
+        SSLContextBuilder builder = SSLContextBuilder.create();
+        try {
+            builder.loadTrustMaterial(null, (chain, authType) -> true);
+            SSLContext sslContext = builder.build();
+            inSecureSslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
+        } catch (NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static final SocketConfig defaultSocketConfig = createSocketConfig();
     private static final PoolingHttpClientConnectionManager defaultConnectionManager = createConnectionManager();
-    private static final PoolingHttpClientConnectionManager defaultConnectionWithoutSslCertificateCheckManager = createNoneSslCertificateCheckConnectionManager();
+    private static final PoolingHttpClientConnectionManager defaultInSecureConnectionManager = createInSecureSslConnectionManager();
     private static final RequestConfig defaultRequestConfig = createRequestConfig();
     private static final HttpClient defaultHttpClient = createDefaultHttpClient();
-    private static final HttpClient defaultHttpClientWithoutSslCertificateCheck = createDefaultHttpClientWithoutSslCertificateCheckClient();
+    private static final HttpClient defaultInSecureHttpClient = createDefaultInSecureHttpClient();
 
     public static HttpResponseEntity get(String uri) throws IOException {
         return get(uri, null);
@@ -94,20 +105,20 @@ public class HttpClientUtil {
         return executeGet(client, uri, headers, params, encode);
     }
 
-    public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri) throws IOException {
-        return sslGetWithoutCertificateCheck(uri, null);
+    public static HttpResponseEntity sslGetInSecure(String uri) throws IOException {
+        return sslGetInSecure(uri, null);
     }
 
-    public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri, Map<String, ?> params) throws IOException {
-        return sslGetWithoutCertificateCheck(uri, null, params);
+    public static HttpResponseEntity sslGetInSecure(String uri, Map<String, ?> params) throws IOException {
+        return sslGetInSecure(uri, null, params);
     }
 
-    public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
-        return sslGetWithoutCertificateCheck(uri, headers, params, false);
+    public static HttpResponseEntity sslGetInSecure(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
+        return sslGetInSecure(uri, headers, params, false);
     }
 
-    public static HttpResponseEntity sslGetWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
-        return executeGet(defaultHttpClientWithoutSslCertificateCheck, uri, headers, params, encode);
+    public static HttpResponseEntity sslGetInSecure(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
+        return executeGet(defaultInSecureHttpClient, uri, headers, params, encode);
     }
 
     public static HttpResponseEntity sslGetWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, ?> params, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
@@ -155,16 +166,16 @@ public class HttpClientUtil {
         return executeDelete(client, uri, headers, params, encode);
     }
 
-    public static HttpResponseEntity sslDeleteWithoutCertificateCheck(String uri, Map<String, ?> params) throws IOException {
-        return sslDeleteWithoutCertificateCheck(uri, null, params);
+    public static HttpResponseEntity sslDeleteInSecure(String uri, Map<String, ?> params) throws IOException {
+        return sslDeleteInSecure(uri, null, params);
     }
 
-    public static HttpResponseEntity sslDeleteWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
-        return sslDeleteWithoutCertificateCheck(uri, headers, params, false);
+    public static HttpResponseEntity sslDeleteInSecure(String uri, Map<String, String> headers, Map<String, ?> params) throws IOException {
+        return sslDeleteInSecure(uri, headers, params, false);
     }
 
-    public static HttpResponseEntity sslDeleteWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
-        return executeDelete(defaultHttpClientWithoutSslCertificateCheck, uri, headers, params, encode);
+    public static HttpResponseEntity sslDeleteInSecure(String uri, Map<String, String> headers, Map<String, ?> params, boolean encode) throws IOException {
+        return executeDelete(defaultInSecureHttpClient, uri, headers, params, encode);
     }
 
     public static HttpResponseEntity sslDeleteWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, ?> params, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
@@ -229,12 +240,12 @@ public class HttpClientUtil {
         return executePost(client, uri, headers, params, paramFormat);
     }
 
-    public static HttpResponseEntity sslPostWithoutCertificateCheck(String uri, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
-        return sslPostWithoutCertificateCheck(uri, null, params, paramFormat);
+    public static HttpResponseEntity sslPostInSecure(String uri, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
+        return sslPostInSecure(uri, null, params, paramFormat);
     }
 
-    public static HttpResponseEntity sslPostWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
-        return executePost(defaultHttpClientWithoutSslCertificateCheck, uri, headers, params, paramFormat);
+    public static HttpResponseEntity sslPostInSecure(String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
+        return executePost(defaultInSecureHttpClient, uri, headers, params, paramFormat);
     }
 
     public static HttpResponseEntity sslPostWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, ?> params, ParamFormat paramFormat, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
@@ -245,11 +256,11 @@ public class HttpClientUtil {
         return executePost(createHttpClientWithKeyManagerFactoryAndTrustManagerFactory(keyManagerFactory, trustManagerFactory), uri, headers, params, paramFormat);
     }
 
-    public static HttpResponseEntity sslPostWithoutCertificateCheck(String uri, String body, ParamFormat paramFormat) throws IOException {
-        return sslPostWithoutCertificateCheck(uri, null, body, paramFormat);
+    public static HttpResponseEntity sslPostInSecure(String uri, String body, ParamFormat paramFormat) throws IOException {
+        return sslPostInSecure(uri, null, body, paramFormat);
     }
 
-    public static HttpResponseEntity sslPostWithoutCertificateCheck(String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
+    public static HttpResponseEntity sslPostInSecure(String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
         return executePost(defaultHttpClient, uri, headers, body, paramFormat);
     }
 
@@ -307,12 +318,12 @@ public class HttpClientUtil {
         return executePut(client, uri, headers, body, paramFormat);
     }
 
-    public static HttpResponseEntity sslPutWithoutCertificateCheck(String uri, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
-        return sslPutWithoutCertificateCheck(uri, null, params, paramFormat);
+    public static HttpResponseEntity sslPutInsecure(String uri, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
+        return sslPutInsecure(uri, null, params, paramFormat);
     }
 
-    public static HttpResponseEntity sslPutWithoutCertificateCheck(String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
-        return executePut(defaultHttpClientWithoutSslCertificateCheck, uri, headers, params, paramFormat);
+    public static HttpResponseEntity sslPutInsecure(String uri, Map<String, String> headers, Map<String, ?> params, ParamFormat paramFormat) throws IOException {
+        return executePut(defaultInSecureHttpClient, uri, headers, params, paramFormat);
     }
 
     public static HttpResponseEntity sslPutWithKeyManagerFactoryAndTrustManagerFactory(String uri, Map<String, ?> params, ParamFormat paramFormat, KeyManagerFactory keyManagerFactory, TrustManagerFactory trustManagerFactory) throws IOException, KeyManagementException {
@@ -330,11 +341,11 @@ public class HttpClientUtil {
         return executeRequest(httpClient, httpPut);
     }
 
-    public static HttpResponseEntity sslPutWithoutCertificateCheck(String uri, String body, ParamFormat paramFormat) throws IOException {
-        return sslPutWithoutCertificateCheck(uri, null, body, paramFormat);
+    public static HttpResponseEntity sslPutInSecure(String uri, String body, ParamFormat paramFormat) throws IOException {
+        return sslPutInSecure(uri, null, body, paramFormat);
     }
 
-    public static HttpResponseEntity sslPutWithoutCertificateCheck(String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
+    public static HttpResponseEntity sslPutInSecure(String uri, Map<String, String> headers, String body, ParamFormat paramFormat) throws IOException {
         return executePut(defaultHttpClient, uri, headers, body, paramFormat);
     }
 
@@ -490,16 +501,12 @@ public class HttpClientUtil {
         return manager;
     }
 
-    private static PoolingHttpClientConnectionManager createNoneSslCertificateCheckConnectionManager() {
+    private static PoolingHttpClientConnectionManager createInSecureSslConnectionManager() {
         try {
-            SSLContextBuilder builder = new SSLContextBuilder();
-            builder.loadTrustMaterial(null, (chain, authType) -> true);
-            SSLContext sslContext = builder.build();
-            SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, NoopHostnameVerifier.INSTANCE);
             Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder
                 .<ConnectionSocketFactory>create()
                 .register("http", HttpClientUtilCustomizer.plainConnectionSocketFactory)
-                .register("https", sslConnectionSocketFactory)
+                .register("https", inSecureSslConnectionSocketFactory)
                 .build();
             PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(socketFactoryRegistry, HttpClientUtilCustomizer.defaultHttpConnectionFactory, HttpClientUtilCustomizer.dnsResolver);
             manager.setMaxTotal(HttpClientUtilCustomizer.maxTotal);
@@ -509,9 +516,22 @@ public class HttpClientUtil {
             manager.setDefaultSocketConfig(defaultSocketConfig);
             return manager;
         } catch (Exception e) {
-            logger.warn("NoneSslCertificateCheckConnectionManager创建失败", e);
+            logger.warn("InSecureSslConnectionManager创建失败", e);
             return defaultConnectionManager;
         }
+    }
+
+    public static CloseableHttpClient createInSecureProxiedHttpClient(String host, int port, int connectTimeout, int socketTimeout) {
+        return HttpClientBuilder.create()
+            .setDefaultRequestConfig(RequestConfig
+                .custom()
+                .setConnectTimeout(connectTimeout)
+                .setSocketTimeout(socketTimeout)
+                .setCookieSpec(CookieSpecs.STANDARD)
+                .setProxy(new HttpHost(host, port))
+                .build())
+            .setSSLSocketFactory(inSecureSslConnectionSocketFactory)
+            .build();
     }
 
     private static RequestConfig createRequestConfig() {
@@ -538,9 +558,9 @@ public class HttpClientUtil {
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
             .build();
     }
-    private static HttpClient createDefaultHttpClientWithoutSslCertificateCheckClient() {
+    private static HttpClient createDefaultInSecureHttpClient() {
         return HttpClients.custom()
-            .setConnectionManager(defaultConnectionWithoutSslCertificateCheckManager)
+            .setConnectionManager(defaultInSecureConnectionManager)
             .setConnectionManagerShared(false)
             .evictIdleConnections(HttpClientUtilCustomizer.maxIdleTimeInSeconds, TimeUnit.SECONDS)
             .evictExpiredConnections()

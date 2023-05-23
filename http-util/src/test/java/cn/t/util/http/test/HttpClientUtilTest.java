@@ -22,15 +22,16 @@ public class HttpClientUtilTest {
 
     @Test
     public void getTest() throws IOException {
-        String url = "http://127.0.0.1:8080/test";
-        Map<String, String> headers = new HashMap<>();
-        headers.put("my-header", "this is my header");
-        Map<String, Object> params = new HashMap<>();
-        params.put("name", "amen");
-        HttpResponseEntity responseEntity = HttpClientUtil.get(url, headers, params);
-        logger.info("status: {}", responseEntity.getCode());
-        logger.info("content type: {}", responseEntity.getHeader(HttpHeaders.CONTENT_TYPE));
-        logger.info("content: {}", responseEntity.getContent());
+        System.out.printf("异常: %s%nurl: www.baidu.com", "123");
+//        String url = "http://127.0.0.1:8080/test";
+//        Map<String, String> headers = new HashMap<>();
+//        headers.put("my-header", "this is my header");
+//        Map<String, Object> params = new HashMap<>();
+//        params.put("name", "amen");
+//        HttpResponseEntity responseEntity = HttpClientUtil.get(url, headers, params);
+//        logger.info("status: {}", responseEntity.getCode());
+//        logger.info("content type: {}", responseEntity.getHeader(HttpHeaders.CONTENT_TYPE));
+//        logger.info("content: {}", responseEntity.getContent());
     }
 
     @Test
@@ -97,7 +98,7 @@ public class HttpClientUtilTest {
     @Test
     public void selfCertificateSslGetWithoutCertificateCheckTest() throws Exception {
         String uri = "https://liby.com/";
-        HttpResponseEntity entity = HttpClientUtil.sslGetWithoutCertificateCheck(uri, Collections.emptyMap());
+        HttpResponseEntity entity = HttpClientUtil.sslGetInSecure(uri, Collections.emptyMap());
         System.out.println(entity);
     }
 
@@ -208,7 +209,7 @@ public class HttpClientUtilTest {
 
         for (int i = 0; i < 200; i++) {
             String ip = String.format(ipFormat, i);
-            HttpResponseEntity responseEntity = HttpClientUtil.sslGetWithoutCertificateCheck(url + ip, headers, Collections.emptyMap());
+            HttpResponseEntity responseEntity = HttpClientUtil.sslGetInSecure(url + ip, headers, Collections.emptyMap());
             byte[] content = responseEntity.getContent();
             int startIndex = ArrayUtil.binarySearch(content, charsetIdentityStartBytes);
             startIndex = startIndex + charsetIdentityStartBytes.length;
@@ -225,6 +226,14 @@ public class HttpClientUtilTest {
             System.out.println("=====================================================");
             LockSupport.parkNanos(TimeUnit.SECONDS.toNanos(2));
         }
+    }
+
+    @Test
+    public void testCloudFlare() throws Exception {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("host", "paoluz.link");
+        HttpResponseEntity responseEntity = HttpClientUtil.sslGetInSecure(("http://172.67.161.210:80/auth/login"), headers, Collections.emptyMap());
+        System.out.println(new String(responseEntity.getContent()));
     }
 
 }
