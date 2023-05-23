@@ -12,4 +12,12 @@ public class ExceptionUtil {
         return sw.getBuffer().toString();
     }
 
+    public static Throwable getCausedBy(Throwable throwable) {
+        if(throwable.getCause() != null) {
+            return getCausedBy(throwable.getCause());
+        } else {
+            return throwable;
+        }
+    }
+
 }
