@@ -521,15 +521,17 @@ public class HttpClientUtil {
         }
     }
 
-    public static CloseableHttpClient createInSecureProxiedHttpClient(String host, int port, int connectTimeout, int socketTimeout) {
+    public static CloseableHttpClient createInSecureHttpClient(String proxyHost, Integer proxyPort, int connectTimeout, int socketTimeout) {
+        RequestConfig.Builder requestConfigBuilder = RequestConfig
+            .custom()
+            .setConnectTimeout(connectTimeout)
+            .setSocketTimeout(socketTimeout)
+            .setCookieSpec(CookieSpecs.STANDARD);
+        if(proxyHost != null && proxyPort != null) {
+            requestConfigBuilder.setProxy(new HttpHost(proxyHost, proxyPort));
+        }
         return HttpClientBuilder.create()
-            .setDefaultRequestConfig(RequestConfig
-                .custom()
-                .setConnectTimeout(connectTimeout)
-                .setSocketTimeout(socketTimeout)
-                .setCookieSpec(CookieSpecs.STANDARD)
-                .setProxy(new HttpHost(host, port))
-                .build())
+            .setDefaultRequestConfig(requestConfigBuilder.build())
             .setSSLSocketFactory(inSecureSslConnectionSocketFactory)
             .build();
     }

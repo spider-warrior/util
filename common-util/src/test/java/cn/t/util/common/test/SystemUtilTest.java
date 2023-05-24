@@ -1,5 +1,6 @@
 package cn.t.util.common.test;
 
+import cn.t.util.common.ConvertUtil;
 import cn.t.util.common.SystemUtil;
 import org.junit.Test;
 
@@ -45,4 +46,25 @@ public class SystemUtilTest {
             }
         }
     }
+
+    @Test
+    public void testLocalSiteIp() {
+        String ip1Start = "10.0.0.0";
+        String ip1End = "11.0.0.0";
+        System.out.println(ConvertUtil.toIpNumber(ip1Start));
+        System.out.println(ConvertUtil.toIpNumber(ip1End));
+        System.out.println("-------------------------------------------------------");
+
+        String ip2Start = "172.16.0.0";
+        String ip2End = "172.17.0.0";
+        System.out.println(ConvertUtil.toIpNumber(ip2Start));
+        System.out.println(ConvertUtil.toIpNumber(ip2End));
+        System.out.println("-------------------------------------------------------");
+
+        String ip3Start = "192.168.0.0";
+        String ip3End = "192.169.0.0";
+        System.out.println(ConvertUtil.toIpNumber(ip3Start));
+        System.out.println(ConvertUtil.toIpNumber(ip3End));
+    }
+
 }
