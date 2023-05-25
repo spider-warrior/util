@@ -93,7 +93,7 @@ public class SystemUtil {
         }
         int ipParts0 = ipParts[0] & 0xFF;
         return ipParts0 == 10
-            || ipParts0 == 172 && ipParts[1] == 16
+            || ipParts0 == 172 && (ipParts[1] & 0xF0) == 16
             || ipParts0 == 192 && (ipParts[1] & 0xFF) == 168;
     }
 
