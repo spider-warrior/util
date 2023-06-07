@@ -7,13 +7,13 @@
     <parent>
         <groupId>cn.t</groupId>
         <artifactId>parent-lib-pom</artifactId>
-        <version>1.0.0.RELEASE</version>
+        <version>1.0.1.RELEASE</version>
         <relativePath/>
     </parent>
 
     <artifactId>util</artifactId>
     <packaging>pom</packaging>
-    <version>1.0.18.RELEASE</version>
+    <version>1.0.19.RELEASE</version>
     <name>util</name>
     <description>util</description>
     <url>https://github.com/spider-warrior/util</url>
