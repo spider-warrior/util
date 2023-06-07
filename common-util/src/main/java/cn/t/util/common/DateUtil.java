@@ -2,7 +2,10 @@ package cn.t.util.common;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.*;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
@@ -12,10 +15,6 @@ public class DateUtil {
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
     private static final String YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
     private static final String YYYY_MM_DD_HH_MM_SS_Z = "yyyy-MM-dd HH:mm:ssZ";
-
-    public static final SimpleDateFormat YYYY_MM_DD_SDF = new SimpleDateFormat(YYYY_MM_DD);
-    public static final SimpleDateFormat YYYY_MM_DD_HH_MM_SS_SDF = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS);
-    public static final SimpleDateFormat YYYY_MM_DD_HH_MM_SS_Z_SDF = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS_Z);
 
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(YYYY_MM_DD);
 
@@ -159,22 +158,32 @@ public class DateUtil {
     }
 
     public static String convertToDate(Date date) {
-        synchronized (YYYY_MM_DD_SDF) {
-            return YYYY_MM_DD_SDF.format(date);
-        }
+        return SimpleDateFormatHolder.threadSimpleDateFormatHolder().YYYY_MM_DD_SDF.format(date);
     }
 
     public static String convertToDateTimeString(Date date) {
-        synchronized (YYYY_MM_DD_HH_MM_SS_SDF) {
-            return YYYY_MM_DD_HH_MM_SS_SDF.format(date);
-        }
+        return SimpleDateFormatHolder.threadSimpleDateFormatHolder().YYYY_MM_DD_HH_MM_SS_SDF.format(date);
     }
 
     public static String convertToZonedDateTimeString(Date date) {
-        synchronized (YYYY_MM_DD_HH_MM_SS_Z_SDF) {
-            return YYYY_MM_DD_HH_MM_SS_Z_SDF.format(date);
-        }
+        return SimpleDateFormatHolder.threadSimpleDateFormatHolder().YYYY_MM_DD_HH_MM_SS_Z_SDF.format(date);
     }
 
+    private static class SimpleDateFormatHolder {
+        private static final ThreadLocal<SimpleDateFormatHolder> threadSimpleDateFormatHolder = new ThreadLocal<>();
 
+        private static SimpleDateFormatHolder threadSimpleDateFormatHolder() {
+            SimpleDateFormatHolder simpleDateFormatHolder = threadSimpleDateFormatHolder.get();
+            if(simpleDateFormatHolder != null) {
+                return simpleDateFormatHolder;
+            }
+            simpleDateFormatHolder = new SimpleDateFormatHolder();
+            threadSimpleDateFormatHolder.set(simpleDateFormatHolder);
+            return simpleDateFormatHolder;
+        }
+
+        private final SimpleDateFormat YYYY_MM_DD_SDF = new SimpleDateFormat(YYYY_MM_DD);
+        private final SimpleDateFormat YYYY_MM_DD_HH_MM_SS_SDF = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS);
+        private final SimpleDateFormat YYYY_MM_DD_HH_MM_SS_Z_SDF = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS_Z);
+    }
 }

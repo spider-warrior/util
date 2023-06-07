@@ -9,9 +9,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 public class DateUtilTest {
 
@@ -34,9 +34,9 @@ public class DateUtilTest {
         String str5 = "1991-10-10 10:10:10.100";
         DateTimeFormatter dateTimeFormatter =
             new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd[ [HH][:mm][:ss][.SSS]]")
-//                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
-//                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
-//                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
+                .parseDefaulting(ChronoField.HOUR_OF_DAY, 0)
+                .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
+                .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
                 .toFormatter();
         dateTimeFormatter.withResolverStyle(ResolverStyle.STRICT);
         System.out.println(LocalDateTime.parse(str1, dateTimeFormatter));
@@ -51,15 +51,9 @@ public class DateUtilTest {
     public void getBeginTimeOfMonth() {
         LocalDateTime localDateTime = DateUtil.getBeginDateTimeOfMonth();
         System.out.println(localDateTime);
-        System.out.println(DateUtil.localDateTimeToMills(localDateTime));
-
-        System.out.println(System.currentTimeMillis());
-        System.out.println(DateUtil.localDateTimeToMills(LocalDateTime.now()));
-
         LocalDate localDate = DateUtil.getBeginDateOfMonth();
         System.out.println(localDate);
         System.out.println(localDate.minusMonths(3));
-
     }
 
     @Test
