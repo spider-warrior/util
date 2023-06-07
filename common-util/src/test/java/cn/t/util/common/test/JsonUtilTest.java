@@ -5,6 +5,9 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +52,35 @@ public class JsonUtilTest {
         System.out.println(studentResult);
     }
 
+    @Test
+    public void testSerializeDate() throws Exception {
+        System.out.println(JsonUtil.serialize(new Date()));
+    }
+
+    @Test
+    public void testSerializeLocalDate() throws Exception {
+        System.out.println(JsonUtil.serialize(LocalDate.now()));
+    }
+
+    @Test
+    public void testSerializeLocalDateTime() throws Exception {
+        System.out.println(JsonUtil.serialize(LocalDateTime.now()));
+    }
+
+    @Test
+    public void testSerializeStudent() throws Exception {
+        Student student = new Student();
+        student.setName("zhangsan");
+        student.setBirthday(LocalDate.now());
+        student.setCrTime(LocalDateTime.now());
+        System.out.println(JsonUtil.serialize(student));
+    }
+
+    @Test
+    public void testDeSerializeLocalDate() throws Exception {
+        System.out.println(JsonUtil.deserialize("{\"name\":\"zhangsan\",\"birthday\":\"2023-06-07\",\"crTime\":\"2023-06-07 16:07:32.577\"}", Student.class));
+    }
+
 }
 
 
@@ -84,6 +116,8 @@ class Result<T> {
 class Student {
     private Long id;
     private String name;
+    private LocalDate birthday;
+    private LocalDateTime crTime;
 
     public Long getId() {
         return id;
@@ -101,11 +135,29 @@ class Student {
         this.name = name;
     }
 
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
+    public LocalDateTime getCrTime() {
+        return crTime;
+    }
+
+    public void setCrTime(LocalDateTime crTime) {
+        this.crTime = crTime;
+    }
+
     @Override
     public String toString() {
         return "Student{" +
             "id=" + id +
             ", name='" + name + '\'' +
+            ", birthday=" + birthday +
+            ", crTime=" + crTime +
             '}';
     }
 }
