@@ -82,8 +82,8 @@ public class HttpClientUtil {
     private static final PoolingHttpClientConnectionManager defaultConnectionManager = createConnectionManager();
     private static final PoolingHttpClientConnectionManager defaultInSecureConnectionManager = createInSecureSslConnectionManager();
     private static final RequestConfig defaultRequestConfig = createRequestConfig();
-    private static final HttpClient defaultHttpClient = createDefaultHttpClient();
-    private static final HttpClient defaultInSecureHttpClient = createDefaultInSecureHttpClient();
+    private static final CloseableHttpClient defaultHttpClient = createDefaultHttpClient();
+    private static final CloseableHttpClient defaultInSecureHttpClient = createDefaultInSecureHttpClient();
 
     public static HttpResponseEntity get(String uri) throws IOException {
         return get(uri, null);
@@ -548,7 +548,7 @@ public class HttpClientUtil {
             .build();
     }
 
-    private static HttpClient createDefaultHttpClient() {
+    private static CloseableHttpClient createDefaultHttpClient() {
         return HttpClients.custom()
             .setConnectionManager(defaultConnectionManager)
             .setConnectionManagerShared(false)
@@ -560,7 +560,7 @@ public class HttpClientUtil {
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
             .build();
     }
-    private static HttpClient createDefaultInSecureHttpClient() {
+    private static CloseableHttpClient createDefaultInSecureHttpClient() {
         return HttpClients.custom()
             .setConnectionManager(defaultInSecureConnectionManager)
             .setConnectionManagerShared(false)
@@ -571,5 +571,14 @@ public class HttpClientUtil {
             .setKeepAliveStrategy(HttpClientUtilCustomizer.connectionKeepAliveStrategy)
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
             .build();
+    }
+
+    public static void destroy() {
+        if(defaultHttpClient != null) {
+            try { defaultHttpClient.close();} catch (IOException ignore) {}
+        }
+        if(defaultInSecureHttpClient != null) {
+            try { defaultInSecureHttpClient.close();} catch (IOException ignore) {}
+        }
     }
 }

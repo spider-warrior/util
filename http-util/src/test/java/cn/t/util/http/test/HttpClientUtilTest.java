@@ -3,6 +3,7 @@ package cn.t.util.http.test;
 import cn.t.util.common.ArrayUtil;
 import cn.t.util.http.*;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -234,6 +235,16 @@ public class HttpClientUtilTest {
         headers.put("host", "paoluz.link");
         HttpResponseEntity responseEntity = HttpClientUtil.sslGetInSecure(("http://172.67.161.210:80/auth/login"), headers, Collections.emptyMap());
         System.out.println(new String(responseEntity.getContent()));
+    }
+
+    @Test
+    public void proxyTest() throws Exception {
+        HttpClientUtilCustomizer.connectTimeout = 5000000;
+        HttpClientUtilCustomizer.soTimeout = 5000000;
+        HttpClientUtilCustomizer.proxy = new HttpHost("127.0.0.1", 1087);
+        HttpResponseEntity entity = HttpClientUtil.sslGetInSecure("https://www.baidu.com");
+        System.out.println(new String(entity.getContent()));
+        HttpClientUtil.destroy();
     }
 
 }
