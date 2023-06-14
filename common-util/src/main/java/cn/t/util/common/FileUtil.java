@@ -453,14 +453,31 @@ public class FileUtil {
     }
 
     public static String extractFileExtension(String fileName) {
-        if(StringUtil.isEmpty(fileName)) {
-            return "";
+        if(fileName == null) {
+            return null;
+        }
+        if("".equals(fileName.trim())) {
+            return fileName;
         }
         int dotIndex = fileName.indexOf('.');
         if(dotIndex == -1) {
             return "";
         }
         return fileName.substring(dotIndex + 1);
+    }
+
+    public static String extractFileName(String fileName) {
+        if(fileName == null) {
+            return null;
+        }
+        if("".equals(fileName.trim())) {
+            return fileName;
+        }
+        int dotIndex = fileName.lastIndexOf('.');
+        if(dotIndex == -1) {
+            return fileName;
+        }
+        return fileName.substring(0, dotIndex);
     }
 
     public static boolean deleteFile(File file) {

@@ -1,5 +1,6 @@
 package cn.t.util.common.test;
 
+import cn.t.util.common.FileUtil;
 import org.junit.Test;
 
 import java.io.File;
@@ -36,5 +37,19 @@ public class FileUtilTest {
                 }
             }
         }
+    }
+
+    @Test
+    public void extractFileNameTest() {
+        String fileName1 = null;
+        String fileName2 = "";
+        String fileName3 = "abc";
+        String fileName4 = "abc.png";
+        String fileName5 = "abc.a.b.c.png";
+        System.out.println(FileUtil.extractFileName(fileName1));
+        System.out.println(FileUtil.extractFileName(fileName2));
+        System.out.println(FileUtil.extractFileName(fileName3));
+        System.out.println(FileUtil.extractFileName(fileName4));
+        System.out.println(FileUtil.extractFileName(fileName5));
     }
 }
