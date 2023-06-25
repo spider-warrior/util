@@ -1,4 +1,4 @@
-package cn.t.util.doc.test.aspose;
+package cn.t.util.doc.test.aspose.doc;
 
 
 import com.aspose.words.*;
@@ -24,12 +24,6 @@ public class DocToHtmlTest {
         String docPath = workDir + "2023爱分析･生成式AI应用实践报告-0615.docx";
         // Load the document from disk.
         Document doc = new Document(Files.newInputStream(Paths.get(docPath)));
-
-//        doc.save(output + "result.jpg", SaveFormat.JPEG);
-//        ImageSaveOptions imageSaveOptions = new ImageSaveOptions(SaveFormat.JPEG);
-//        imageSaveOptions.setPageSet(new PageSet(new PageRange(0, doc.getPageCount() - 1)));
-//        imageSaveOptions.setPageSavingCallback(new HandlePageSavingCallback(output));
-//        doc.save(output + "result.jpg", imageSaveOptions);
         doc.save(output + "index.html", SaveFormat.HTML);
     }
 
