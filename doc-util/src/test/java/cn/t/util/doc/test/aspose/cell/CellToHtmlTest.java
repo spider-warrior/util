@@ -1,9 +1,9 @@
 package cn.t.util.doc.test.aspose.cell;
 
 
+import com.aspose.cells.HtmlSaveOptions;
 import com.aspose.cells.License;
-import com.aspose.cells.PdfCompliance;
-import com.aspose.cells.PdfSaveOptions;
+import com.aspose.cells.SaveFormat;
 import com.aspose.cells.Workbook;
 
 import java.io.InputStream;
@@ -23,12 +23,15 @@ public class CellToHtmlTest {
 
         loadLicense(licenseFilePath);
 
-        String docPath = workDir + "cell-1.xls";
+        String docPath = workDir + "cell-1.xlsx";
+
+        HtmlSaveOptions options = new HtmlSaveOptions(SaveFormat.HTML);
+        options.setExportRowColumnHeadings(true);
+        options.setExcludeUnusedStyles(true);
+        options.setExportWorksheetCSSSeparately(true);
 
         Workbook workbook = new Workbook(docPath);
-        PdfSaveOptions pdfOptions = new PdfSaveOptions();
-        pdfOptions.setCompliance(PdfCompliance.PDF_A_1_B);
-        workbook.save(output + "result.pdf", pdfOptions);
+        workbook.save(output + "index.html", options);
     }
 
     private static void loadLicense(String licenseFilePath) throws Exception {
