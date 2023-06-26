@@ -14,13 +14,13 @@ import java.nio.file.Paths;
  **/
 public class CellToImageTest {
     public static void main(String[] args) throws Exception {
-        String workDir = "D:/tmp/cell2html/";
+        String workDir = "D:/tmp/cell2jpg/";
         String output = workDir + "output/";
         String licenseFilePath = workDir + "license.xml";
 
         loadLicense(licenseFilePath);
 
-        String docPath = workDir + "cell-1.xlsx";
+        String docPath = workDir + "新建 XLSX 工作表.xlsx";
 
         Workbook workbook = new Workbook(docPath);
 
