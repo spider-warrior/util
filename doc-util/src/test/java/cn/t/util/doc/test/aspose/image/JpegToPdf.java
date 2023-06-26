@@ -25,6 +25,8 @@ public class JpegToPdf {
             imagePathList.add("D:/tmp/jpeg2pdf/3.jpg");
             imagePathList.add("D:/tmp/jpeg2pdf/4.jpg");
             imagePathList.add("D:/tmp/jpeg2pdf/5.jpg");
+            imagePathList.add("D:/tmp/jpeg2pdf/6.png");
+            imagePathList.add("D:/tmp/jpeg2pdf/7.bmp");
             for (String imagePath : imagePathList) {
                 Page page = document.getPages().add();
                 Image image = new Image();

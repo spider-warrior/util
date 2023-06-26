@@ -1,10 +1,7 @@
 package cn.t.util.doc.test.aspose.cell;
 
 
-import com.aspose.cells.License;
-import com.aspose.cells.PdfCompliance;
-import com.aspose.cells.PdfSaveOptions;
-import com.aspose.cells.Workbook;
+import com.aspose.cells.*;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -17,18 +14,20 @@ import java.nio.file.Paths;
  **/
 public class CellToPdfTest {
     public static void main(String[] args) throws Exception {
-        String workDir = "D:/tmp/cell2html/";
+        String workDir = "D:/tmp/cell2pdf/";
         String output = workDir + "output/";
         String licenseFilePath = workDir + "license.xml";
 
         loadLicense(licenseFilePath);
 
-        String docPath = workDir + "cell-1.xls";
+        String docPath = workDir + "cell-1.xlsx";
 
         Workbook workbook = new Workbook(docPath);
-        PdfSaveOptions pdfOptions = new PdfSaveOptions();
-        pdfOptions.setCompliance(PdfCompliance.PDF_A_1_B);
-        workbook.save(output + "result.pdf", pdfOptions);
+        PdfSaveOptions saveOptions = new PdfSaveOptions();
+        saveOptions.setCompliance(PdfCompliance.PDF_A_1_B);
+        saveOptions.setAllColumnsInOnePagePerSheet(true);
+        saveOptions.setOnePagePerSheet(true);
+        workbook.save(output + "result.pdf", saveOptions);
     }
 
     private static void loadLicense(String licenseFilePath) throws Exception {
