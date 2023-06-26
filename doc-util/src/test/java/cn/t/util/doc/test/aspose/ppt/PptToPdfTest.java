@@ -14,9 +14,9 @@ import java.nio.file.Paths;
  * @version V1.0
  * @since 2021-07-01 16:17
  **/
-public class PptToHtmlTest {
+public class PptToPdfTest {
     public static void main(String[] args) throws Exception {
-        String workDir = "D:/tmp/ppt2html/";
+        String workDir = "D:/tmp/ppt2pdf/";
         String output = workDir + "output/";
         String licenseFilePath = workDir + "license.xml";
 
@@ -25,7 +25,7 @@ public class PptToHtmlTest {
         String docPath = workDir + "中国非结构化数据中台实践白皮书.pptx";
 
         Presentation presentation = new Presentation(docPath);
-        presentation.save(output + "index.html", SaveFormat.Html);
+        presentation.save(output + "result.pdf", SaveFormat.Pdf);
         presentation.dispose();
     }
 
