@@ -1,11 +1,10 @@
 package cn.t.util.doc.test.aspose.ppt;
 
 
-import com.aspose.cells.License;
 import com.aspose.slides.ISlide;
 import com.aspose.slides.ISlideCollection;
+import com.aspose.slides.License;
 import com.aspose.slides.Presentation;
-import com.aspose.slides.SaveFormat;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

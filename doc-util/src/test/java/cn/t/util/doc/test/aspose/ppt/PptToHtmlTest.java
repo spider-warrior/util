@@ -1,7 +1,7 @@
 package cn.t.util.doc.test.aspose.ppt;
 
 
-import com.aspose.cells.License;
+import com.aspose.slides.License;
 import com.aspose.slides.Presentation;
 import com.aspose.slides.SaveFormat;
 
