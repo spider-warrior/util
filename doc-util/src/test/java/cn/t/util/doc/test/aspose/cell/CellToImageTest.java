@@ -20,12 +20,14 @@ public class CellToImageTest {
 
         loadLicense(licenseFilePath);
 
-        String docPath = workDir + "新建 XLSX 工作表.xlsx";
+        String docPath = workDir + "excel测试文档.xls";
 
         Workbook workbook = new Workbook(docPath);
 
         ImageOrPrintOptions imgOptions = new ImageOrPrintOptions();
-        imgOptions.setSaveFormat(SaveFormat.JPG);
+        imgOptions.setImageType(ImageType.JPEG);
+        imgOptions.setHorizontalResolution(300);
+        imgOptions.setVerticalResolution(300);
         imgOptions.setOnePagePerSheet(true);
 
         int sheetCount = workbook.getWorksheets().getCount();
