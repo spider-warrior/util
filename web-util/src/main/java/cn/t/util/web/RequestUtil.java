@@ -137,7 +137,7 @@ public class RequestUtil {
         }
     }
 
-    public String getRemoteAddress(HttpServletRequest request) {
+    public static String getRemoteAddress(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-Forwarded-For");
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
