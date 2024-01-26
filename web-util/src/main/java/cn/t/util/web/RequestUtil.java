@@ -42,6 +42,10 @@ public class RequestUtil {
         setCookie(response, domain, path, cookieName, null, 0);
     }
 
+    public static void setCookie(HttpServletResponse response, String cookieName, String cookieValue) throws UnsupportedEncodingException {
+        setCookie(response, null, null, cookieName, cookieValue, null);
+    }
+
     public static void setCookie(HttpServletResponse response, String domain, String cookieName, String cookieValue) throws UnsupportedEncodingException {
         setCookie(response, domain, null, cookieName, cookieValue, null);
     }
