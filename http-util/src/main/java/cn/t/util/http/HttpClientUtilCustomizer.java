@@ -1,6 +1,7 @@
 package cn.t.util.http;
 
 import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -19,6 +20,8 @@ import org.apache.http.impl.io.DefaultHttpRequestWriterFactory;
 import org.apache.http.impl.io.DefaultHttpResponseParserFactory;
 
 import javax.net.ssl.HostnameVerifier;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class HttpClientUtilCustomizer {
     public static HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.getDefaultHostnameVerifier();
@@ -32,6 +35,7 @@ public class HttpClientUtilCustomizer {
     public static ConnectionKeepAliveStrategy connectionKeepAliveStrategy = DefaultConnectionKeepAliveStrategy.INSTANCE;
     public static HttpRequestRetryHandler httpRequestRetryHandler = new DefaultHttpRequestRetryHandler(0, false);
     public static CookieStore cookieStore = new BasicCookieStore();
+    public static Collection<? extends Header> defaultHeaders = new ArrayList<>();
     public static boolean tcpNoDelay = true;
     public static int soTimeout = 10000;
     public static int connectTimeout = 3000;

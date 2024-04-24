@@ -554,6 +554,7 @@ public class HttpClientUtil {
             .setKeepAliveStrategy(HttpClientUtilCustomizer.connectionKeepAliveStrategy)
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
             .setDefaultCookieStore(HttpClientUtilCustomizer.cookieStore)
+            .setDefaultHeaders(HttpClientUtilCustomizer.defaultHeaders)
             .build();
     }
     private static CloseableHttpClient createDefaultInSecureHttpClient() {
