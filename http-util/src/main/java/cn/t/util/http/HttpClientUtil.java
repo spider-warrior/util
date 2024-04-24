@@ -23,8 +23,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.*;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
@@ -35,7 +33,6 @@ import javax.net.ssl.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -367,11 +364,9 @@ public class HttpClientUtil {
     private static HttpResponseEntity executeRequest(HttpClient httpClient, HttpUriRequest request) throws IOException {
         RequestLine requestLine = request.getRequestLine();
         logger.trace("Executing request: {}", requestLine);
-        HttpContext context = new BasicHttpContext();
-        context.setAttribute("_uri", request.getURI());
-        HttpResponse response = httpClient.execute(request, context);
+        HttpResponse response = httpClient.execute(request);
         try {
-            return buildHttpResponseEntity(response, context);
+            return buildHttpResponseEntity(request, response);
         } finally {
             if(response instanceof CloseableHttpResponse) {
                 ((CloseableHttpResponse)response).close();
@@ -443,7 +438,7 @@ public class HttpClientUtil {
         return builder.build();
     }
 
-    private static HttpResponseEntity buildHttpResponseEntity(HttpResponse response, HttpContext context) throws IOException {
+    private static HttpResponseEntity buildHttpResponseEntity(HttpUriRequest request, HttpResponse response) throws IOException {
         HttpResponseEntity responseEntity = new HttpResponseEntity();
         StatusLine statusLine = response.getStatusLine();
         HttpEntity entity = response.getEntity();
@@ -452,7 +447,7 @@ public class HttpClientUtil {
         if (entity != null) {
             responseEntity.setContent(EntityUtils.toByteArray(entity));
         }
-        responseEntity.setUri((URI)context.getAttribute("_uri"));
+        responseEntity.setUri(request.getURI());
         EntityUtils.consume(entity);
         return responseEntity;
     }
@@ -558,6 +553,7 @@ public class HttpClientUtil {
             .setConnectionReuseStrategy(HttpClientUtilCustomizer.connectionReuseStrategy)
             .setKeepAliveStrategy(HttpClientUtilCustomizer.connectionKeepAliveStrategy)
             .setRetryHandler(HttpClientUtilCustomizer.httpRequestRetryHandler)
+            .setDefaultCookieStore(HttpClientUtilCustomizer.cookieStore)
             .build();
     }
     private static CloseableHttpClient createDefaultInSecureHttpClient() {
