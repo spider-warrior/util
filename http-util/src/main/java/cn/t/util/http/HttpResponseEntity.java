@@ -64,7 +64,7 @@ public class HttpResponseEntity {
         return "HttpResponseEntity{" +
             "code=" + code +
             ", headers=" + Arrays.toString(headers) +
-            ", content=" + Arrays.toString(content) +
+            ", content=" + (content == null ? "null" : content.length + "B") +
             ", uri=" + uri +
             '}';
     }

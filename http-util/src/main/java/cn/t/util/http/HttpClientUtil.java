@@ -362,9 +362,8 @@ public class HttpClientUtil {
     }
 
     private static HttpResponseEntity executeRequest(HttpClient httpClient, HttpUriRequest request) throws IOException {
-        RequestLine requestLine = request.getRequestLine();
-        logger.trace("Executing request: {}", requestLine);
         HttpResponse response = httpClient.execute(request);
+//        logger.debug("request: {}, response: {}", request, response);
         try {
             return buildHttpResponseEntity(request, response);
         } finally {
