@@ -23,7 +23,7 @@ public class ByteUtilTest {
 
     @Test
     public void hexStringToBytesTest() {
-        String hex = "00439b26";
+        String hex = "a7e1a587";
         byte[] result = ByteUtil.hexStringToBytes(hex, ByteOrder.BIG_ENDIAN);
         System.out.println("bytes: ");
         ByteUtil.printBytesInline(result, ", ", true);
