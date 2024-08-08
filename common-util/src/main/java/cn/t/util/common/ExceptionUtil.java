@@ -20,4 +20,12 @@ public class ExceptionUtil {
         }
     }
 
+    public static String getErrorMessage(Throwable throwable) {
+        if(throwable.getCause() != null && throwable.getCause().getMessage() != null) {
+            return getErrorMessage(throwable.getCause());
+        } else {
+            return throwable.getMessage();
+        }
+    }
+
 }
