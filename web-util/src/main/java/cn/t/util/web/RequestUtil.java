@@ -3,10 +3,10 @@ package cn.t.util.web;
 import cn.t.util.common.ArrayUtil;
 import cn.t.util.common.RegexUtil;
 import cn.t.util.common.StringUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

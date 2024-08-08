@@ -1,6 +1,7 @@
 package cn.t.util.web;
 
-import javax.servlet.http.Cookie;
+import jakarta.servlet.http.Cookie;
+
 import java.util.function.Consumer;
 
 public enum CookieOption {

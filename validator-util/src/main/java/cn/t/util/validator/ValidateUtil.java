@@ -3,11 +3,11 @@ package cn.t.util.validator;
 import cn.t.util.common.CollectionUtil;
 import cn.t.util.common.StringUtil;
 import cn.t.util.internationalize.MessageUtil;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.hibernate.validator.HibernateValidator;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
