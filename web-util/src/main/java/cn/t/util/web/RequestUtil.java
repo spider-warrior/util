@@ -70,7 +70,7 @@ public class RequestUtil {
         if (cookieValue == null) {
             cookieValue = "";
         } else if (isEncode) {
-            cookieValue = URLEncoder.encode(cookieValue, StandardCharsets.UTF_8.name());
+            cookieValue = URLEncoder.encode(cookieValue, StandardCharsets.UTF_8);
         }
         Cookie cookie = new Cookie(cookieName, cookieValue);
         if (maxAge != null) {
@@ -84,7 +84,7 @@ public class RequestUtil {
         } else {
             cookie.setPath(path);
         }
-        if(options != null && options.length>0) {
+        if(options != null) {
             for(CookieOption cookieOption: options){
                 cookieOption.configCookie(cookie);
             }
@@ -148,10 +148,10 @@ public class RequestUtil {
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("X-Real-IP");
         }
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("HTTP_CLIENT_IP");
         }
-        if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("HTTP_X_FORWARDED_FOR");
         }
         if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
