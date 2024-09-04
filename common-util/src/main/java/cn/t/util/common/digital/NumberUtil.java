@@ -43,7 +43,7 @@ public final class NumberUtil {
         }
         return stringBuilder.toString();
     }
-    
+
     public static String intToBinaryStringSimple(int num) {
         StringBuilder stringBuilder = new StringBuilder(32);
         for(int i=0; i<32 && num!=0; i++) {
@@ -320,8 +320,16 @@ public final class NumberUtil {
             exponentBuilder;
     }
 
-
-
+    public static String toAzDecimal(int num) {
+        String columnLetter = "";
+        int mod;
+        do {
+            mod = (num % 26) + 1;
+            columnLetter = (char) (64 + mod) + columnLetter;
+            num = num / 26;
+        } while (num > 0);
+        return columnLetter;
+    }
 
     private NumberUtil() {}
 }
