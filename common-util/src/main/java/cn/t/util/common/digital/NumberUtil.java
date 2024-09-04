@@ -320,6 +320,8 @@ public final class NumberUtil {
             exponentBuilder;
     }
 
+    // 格式: 0-9 => A-Z
+    // 二十六禁止转换，A-Z, BA-BZ,CA-CZ...
     public static String toAzDecimal(int num) {
         String columnLetter = "";
         int mod;
@@ -328,6 +330,19 @@ public final class NumberUtil {
             columnLetter = (char) (65 + mod) + columnLetter;
             num = num / 26;
         } while (num > 0);
+        return columnLetter;
+    }
+
+    // 格式: 1-10 => A-Z
+    // 二十六禁止转换，A-Z, BA-BZ,CA-CZ...
+    public static String toAaAzDecimal(int num) {
+        String columnLetter = "";
+        int mod;
+        do {
+            mod = num % 26;
+            columnLetter = (char) (65 + mod) + columnLetter;
+            num = (num / 26) - 1;
+        } while (num > -1);
         return columnLetter;
     }
 
