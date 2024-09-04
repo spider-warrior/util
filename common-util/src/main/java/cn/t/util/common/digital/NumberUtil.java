@@ -324,8 +324,8 @@ public final class NumberUtil {
         String columnLetter = "";
         int mod;
         do {
-            mod = (num % 26) + 1;
-            columnLetter = (char) (64 + mod) + columnLetter;
+            mod = num % 26;
+            columnLetter = (char) (65 + mod) + columnLetter;
             num = num / 26;
         } while (num > 0);
         return columnLetter;
