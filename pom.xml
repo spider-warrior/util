@@ -20,7 +20,7 @@
 
     <modules>
         <module>security-util</module>
-<!--        <module>doc-util</module>-->
+        <module>doc-util</module>
         <module>common-util</module>
         <module>web-util</module>
         <module>socket-util</module>

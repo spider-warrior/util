@@ -15,7 +15,7 @@ import java.text.MessageFormat;
  **/
 public class DocToHtmlTest {
     public static void main(String[] args) throws Exception {
-        String workDir = "D:/tmp/word2html/";
+        String workDir = "D:/tmp/aspose/word2html/";
         String output = workDir + "output/";
         String licenseFilePath = workDir + "license.xml";
 

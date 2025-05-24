@@ -2,17 +2,18 @@ package cn.t.util.doc.test.aspose.pdf;
 
 
 import com.aspose.pdf.Document;
-import com.aspose.pdf.ExcelSaveOptions;
+import com.aspose.pdf.HtmlSaveOptions;
+import com.aspose.pdf.LettersPositioningMethods;
 import com.aspose.pdf.License;
 
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class PdfToExcel {
+public class PdfToHtml {
     public static void main(String[] args) throws Exception {
 
-        String workDir = "D:/tmp/aspose/pdf2excel/";
+        String workDir = "D:/tmp/aspose/pdf2html/";
         String output = workDir + "output/";
         String licenseFilePath = workDir + "license.xml";
 
@@ -21,9 +22,13 @@ public class PdfToExcel {
         loadLicense(licenseFilePath);
 
         try (Document doc = new Document(docPath)) {
-            ExcelSaveOptions options = new ExcelSaveOptions();
-            options.setFormat(ExcelSaveOptions.ExcelFormat.XLSX);
-            doc.save(output + "result.xlsx", options);
+            HtmlSaveOptions options = new HtmlSaveOptions();
+//            options.setPartsEmbeddingMode(HtmlSaveOptions.PartsEmbeddingModes.EmbedAllIntoHtml);
+//
+//            options.setLettersPositioningMethod(LettersPositioningMethods.UseEmUnitsAndCompensationOfRoundingErrorsInCss);
+//            options.setRasterImagesSavingMode(HtmlSaveOptions.RasterImagesSavingModes.AsEmbeddedPartsOfPngPageBackground);
+//            options.setFontSavingMode(HtmlSaveOptions.FontSavingModes.SaveInAllFormats);
+            doc.save(output + "result.html", options);
         }
     }
 

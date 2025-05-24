@@ -1,10 +1,7 @@
 package cn.t.util.doc.test.aspose.cell;
 
 
-import com.aspose.cells.HtmlSaveOptions;
-import com.aspose.cells.License;
-import com.aspose.cells.SaveFormat;
-import com.aspose.cells.Workbook;
+import com.aspose.cells.*;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -17,7 +14,7 @@ import java.nio.file.Paths;
  **/
 public class CellToHtmlTest {
     public static void main(String[] args) throws Exception {
-        String workDir = "D:/tmp/cell2html/";
+        String workDir = "D:/tmp/aspose/cell2html/";
         String output = workDir + "output/";
         String licenseFilePath = workDir + "license.xml";
 

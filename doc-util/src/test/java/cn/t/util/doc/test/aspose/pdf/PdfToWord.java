@@ -12,12 +12,12 @@ import java.nio.file.Paths;
 public class PdfToWord {
     public static void main(String[] args) throws Exception {
 
-        String workDir = "D:/tmp/pdf2word/";
+        String workDir = "D:/tmp/aspose/pdf2word/";
         String output = workDir + "output/";
         String licenseFilePath = workDir + "license.xml";
 
 //        String docPath = workDir + "2021爱分析药企数字化趋势报告.pdf";
-        String docPath = workDir + "张赵洁.pdf";
+        String docPath = workDir + "BQD-D02300047 2021(APP)桥(门)式起重机定期检验记录 - 副本.pdf";
 
 //        FontRepository.getSources();
 //        //加载字体文件
@@ -41,8 +41,8 @@ public class PdfToWord {
         // Load the document from disk.
         Document doc = new Document(Files.newInputStream(Paths.get(docPath)));
         DocSaveOptions saveOptions = new DocSaveOptions();
-        saveOptions.setFormat(DocSaveOptions.DocFormat.Doc);
-        doc.save(output + "result.doc", saveOptions);
+        saveOptions.setFormat(DocSaveOptions.DocFormat.DocX);
+        doc.save(output + "result.docx", saveOptions);
     }
 
     private static void loadLicense(String licenseFilePath) throws Exception {
