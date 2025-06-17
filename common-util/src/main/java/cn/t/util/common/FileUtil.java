@@ -459,7 +459,7 @@ public class FileUtil {
         if("".equals(fileName.trim())) {
             return fileName;
         }
-        int dotIndex = fileName.indexOf('.');
+        int dotIndex = fileName.lastIndexOf('.');
         if(dotIndex == -1) {
             return "";
         }
