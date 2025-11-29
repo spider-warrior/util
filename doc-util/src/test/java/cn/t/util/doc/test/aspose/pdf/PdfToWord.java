@@ -1,9 +1,8 @@
 package cn.t.util.doc.test.aspose.pdf;
 
 
-import com.aspose.pdf.DocSaveOptions;
-import com.aspose.pdf.Document;
-import com.aspose.pdf.License;
+import cn.t.util.common.RandomUtil;
+import com.aspose.pdf.*;
 
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -40,9 +39,49 @@ public class PdfToWord {
 
         // Load the document from disk.
         Document doc = new Document(Files.newInputStream(Paths.get(docPath)));
+        addWaterMark(doc);
         DocSaveOptions saveOptions = new DocSaveOptions();
         saveOptions.setFormat(DocSaveOptions.DocFormat.DocX);
         doc.save(output + "result.docx", saveOptions);
+    }
+
+//    private static void addWaterMark(Document doc) {
+//        com.aspose.pdf.TextStamp textStamp = new com.aspose.pdf.TextStamp("hello");
+//        textStamp.setBackground(true); // 设置为背景
+//        textStamp.setOpacity(0.25);     // 设置透明度
+//        textStamp.setRotateAngle(45);  // 设置旋转角度
+//        textStamp.getTextState().setFontSize(30); // 设置字体大小
+//        textStamp.setHorizontalAlignment(com.aspose.pdf.HorizontalAlignment.Center);
+//        textStamp.setVerticalAlignment(com.aspose.pdf.VerticalAlignment.Center);
+//        for (com.aspose.pdf.Page pdfPage : doc.getPages()) {
+//            pdfPage.addStamp(textStamp);
+//        }
+//    }
+
+    private static void addWaterMark(Document doc) {
+        for (com.aspose.pdf.Page pdfPage : doc.getPages()) {
+            double pageWidth = pdfPage.getRect().getWidth();
+            double pageHeight = pdfPage.getRect().getHeight();
+            // 定义平铺的间距 (根据实际效果调整间隔)
+            // 间距越小，水印越密集
+            double xInterval = 200;
+            double yInterval = 150;
+            for (double y = RandomUtil.randomInt(0, 100); y < pageHeight; y += yInterval) {
+                for (double x = RandomUtil.randomInt(0, 100); x < pageWidth; x += xInterval) {
+                    com.aspose.pdf.TextStamp textStamp = new com.aspose.pdf.TextStamp("hello");
+                    textStamp.setBackground(true); // 设置为背景
+                    textStamp.setOpacity(0.25);     // 设置透明度
+                    textStamp.setRotateAngle(45);  // 设置旋转角度
+                    textStamp.getTextState().setFontSize(30); // 设置字体大小
+                    textStamp.setHorizontalAlignment(HorizontalAlignment.None);
+                    textStamp.setVerticalAlignment(VerticalAlignment.None);
+                    // 设置具体坐标
+                    textStamp.setXIndent(x);
+                    textStamp.setYIndent(y);
+                    pdfPage.addStamp(textStamp);
+                }
+            }
+        }
     }
 
     private static void loadLicense(String licenseFilePath) throws Exception {
